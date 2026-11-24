@@ -8,6 +8,7 @@
    ============================================================ */
 
 const ADMIN_CONFIG_KEY = "obryxAdminConfig";
+const VISIT_KEY = "obryxVisits";
 
 const DEFAULT_APPEARANCE = {
   accent: "teal",
@@ -17,8 +18,9 @@ const DEFAULT_APPEARANCE = {
   backTop: true
 };
 
-let APPEARANCE = { ...DEFAULT_APPEARANCE };
+let APPEARANCE = { ...DEFAULT_APPEARANCE, customColor: "#57e6c5" };
 let DOWNLOAD_URL = "";
+let REMOTE_COUNTER_URL = "";
 let ISO_FILENAME = "Obryx-OS-0.4-Alpha4-x86_64.iso";
 let EXPECTED_HASH = "46d071d4d011ff0061a7baf3316e9689484490169a2b9ca1ca892a2e712cbefb";
 let VERIFY_COMMAND = buildVerifyCommand();
@@ -28,6 +30,7 @@ let lightboxIndex = 0;
 
 document.addEventListener("DOMContentLoaded", () => {
   loadAdminConfig();
+  trackVisit();
   setupDeviceGate();
   setupDownloadButtons();
   setupDownloadModal();
@@ -60,20 +63,48 @@ function loadAdminConfig() {
   VERIFY_COMMAND = buildVerifyCommand();
 
   if (saved.appearance && typeof saved.appearance === "object") {
-    APPEARANCE = { ...DEFAULT_APPEARANCE, ...saved.appearance };
+    APPEARANCE = { ...DEFAULT_APPEARANCE, customColor: "#57e6c5", ...saved.appearance };
   }
+  if (typeof saved.remoteCounterUrl === "string") REMOTE_COUNTER_URL = saved.remoteCounterUrl.trim();
   applyAppearance();
 }
 
 function applyAppearance() {
   const root = document.documentElement;
-  const accent = ["teal", "indigo", "amber", "violet"].includes(APPEARANCE.accent)
+  const accent = ["teal", "indigo", "amber", "violet", "custom"].includes(APPEARANCE.accent)
     ? APPEARANCE.accent
     : "teal";
   root.dataset.accent = accent;
+  if (accent === "custom") {
+    const color = /^#[a-f0-9]{6}$/i.test(APPEARANCE.customColor || "") ? APPEARANCE.customColor : "#57e6c5";
+    root.style.setProperty("--teal", color);
+    root.style.setProperty("--indigo", "#7c8cff");
+  } else {
+    root.style.removeProperty("--teal");
+    root.style.removeProperty("--indigo");
+  }
   root.classList.toggle("no-particles", APPEARANCE.particles === false);
   root.classList.toggle("no-ticker", APPEARANCE.ticker === false);
   root.classList.toggle("no-back-top", APPEARANCE.backTop === false);
+}
+
+/* ── Visit tracking (local log + optional remote endpoint) ─── */
+function trackVisit() {
+  const now = Date.now();
+  let hits = [];
+  try {
+    hits = JSON.parse(localStorage.getItem(VISIT_KEY) || "[]");
+    if (!Array.isArray(hits)) hits = [];
+  } catch (_) { hits = []; }
+
+  const cutoff = now - 30 * 24 * 60 * 60 * 1000;
+  hits = hits.filter((time) => typeof time === "number" && time > cutoff).slice(-500);
+  hits.push(now);
+  try { localStorage.setItem(VISIT_KEY, JSON.stringify(hits)); } catch (_) { /* storage full or blocked */ }
+
+  if (/^https?:\/\//i.test(REMOTE_COUNTER_URL)) {
+    fetch(REMOTE_COUNTER_URL, { mode: "cors", cache: "no-store" }).catch(() => {});
+  }
 }
 
 function isLocalNameOnHostedSite() {

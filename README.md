@@ -27,11 +27,13 @@ Tous les boutons « Download » affichent d'abord la fenêtre d'avertissement be
 
 Le lien, le nom de fichier et le hash se règlent depuis `admin.html` (code par défaut : `obryx-admin`, à changer dans l'interface). Ils sont sauvegardés dans le `localStorage` **de ton navigateur uniquement** : les autres visiteurs n'ont aucun lien configuré. Si aucun lien n'est sauvegardé, le bouton affiche un avertissement au lieu de télécharger.
 
-La console admin contient quatre onglets :
+La console admin contient six onglets :
 - **Download** : presets GoFile / URL directe / fichier local, validation SHA-256, copie du lien et du hash.
-- **Appearance** : couleur d'accent (teal / indigo / amber / violet) et activation des particules, boutons magnétiques, ticker et bouton « retour en haut ».
-- **Security** : changement du code, verrouillage immédiat, reset complet.
-- **Transfer** : export/import d'un fichier `obryx-settings.json` pour passer la configuration à un ami sans hébergement (le code d'accès n'est jamais exporté).
+- **Appearance** : couleur d'accent (teal / indigo / amber / violet / **couleur personnalisée**) et activation des particules, boutons magnétiques, ticker et bouton « retour en haut ».
+- **Visitors** : nombre de visites **aujourd'hui**, hier, sur 7 jours et au total, avec graphique sur 7 jours. Le compteur est local à chaque navigateur (`obryxVisits`, 30 jours max). Pour un compteur **mondial**, renseigne une URL de service type `countapi.xyz` : chaque chargement du site enverra un hit.
+- **Security** : changement du code, verrouillage immédiat, reset complet (historique de visites inclus).
+- **Transfer** : export/import d'un fichier `obryx-settings.json` pour passer la configuration à un ami sans hébergement (le code d'accès n'est jamais exporté ; l'URL du compteur distant est incluse).
+- **Diagnostics** : rapport navigateur/écran/réglages et vérification que les fichiers du site sont accessibles.
 
 L'aura qui suivait le curseur a été supprimée.
 

@@ -80,7 +80,7 @@
     h1 { font-size: clamp(1.9rem, 5vw, 2.5rem); letter-spacing: -.05em; line-height: 1.08; margin: 0 0 10px; }
     h2 { margin: 0 0 16px; font-size: 1.12rem; letter-spacing: -.03em; color: var(--amber); }
     p.lead { color: var(--muted); font-size: .92rem; line-height: 1.6; margin: 0 0 24px; }
-    .status { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 0 0 26px; }
+    .status { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 0 0 26px; }
     .status div { padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: rgba(255,255,255,.03); }
     .status small { display: block; margin-bottom: 5px; font-family: var(--mono); font-size: .58rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
     .status b { font-family: var(--mono); font-size: .74rem; font-weight: 500; color: var(--teal); }
@@ -134,6 +134,15 @@
     .swatch span { display: block; margin-top: 6px; text-align: center; font-family: var(--mono); font-size: .6rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
     .swatch input:checked + i { transform: scale(1.12); box-shadow: 0 0 0 3px var(--c), 0 0 22px var(--c); }
     .swatch input:checked ~ span { color: #fff; }
+    .swatch i.rainbow { background: conic-gradient(#57e6c5, #7c8cff, #ffc46b, #b47bff, #57e6c5); }
+    .color-row { display: flex; align-items: center; gap: 12px; margin: 0 0 22px; }
+    .color-row input[type="color"] { width: 48px; height: 38px; padding: 2px; border: 1px solid var(--border); border-radius: 10px; background: transparent; cursor: pointer; }
+    .color-row small { font-family: var(--mono); font-size: .68rem; color: var(--muted); }
+    .spark { display: block; width: 100%; height: 90px; margin: 18px 0; border: 1px solid var(--border); border-radius: 12px; background: rgba(255,255,255,.025); }
+    .report { max-height: 260px; overflow: auto; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: rgba(0,0,0,.25); color: #c9d3e8; font: .72rem/1.6 var(--mono); white-space: pre-wrap; word-break: break-word; }
+    .meter { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+    .meter b { font-family: var(--mono); font-size: 1.5rem; color: var(--teal); }
+    .meter small { font-family: var(--mono); font-size: .65rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
     .toggle { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 12px; padding: 13px 15px; border: 1px solid var(--border); border-radius: 12px; background: rgba(255,255,255,.025); cursor: pointer; }
     .toggle span:first-child { font-size: .85rem; }
     .toggle small { display: block; margin-top: 3px; font-size: .68rem; color: var(--muted); }
@@ -151,6 +160,7 @@
     [hidden] { display: none !important; }
     @media (max-width: 560px) {
       .status { grid-template-columns: repeat(2, 1fr); }
+      .status div:last-child { grid-column: span 2; }
       .tab { flex: 1 1 40%; }
     }
     @media (prefers-reduced-motion: reduce) {
@@ -181,13 +191,16 @@
         <div><small>Hash</small><b id="statusHash">Not set</b></div>
         <div><small>Access</small><b id="statusCode">Default</b></div>
         <div><small>Effects</small><b id="statusFx">All on</b></div>
+        <div><small>Visits today</small><b id="statusVisits">0</b></div>
       </div>
 
       <nav class="tabs" role="tablist" aria-label="Console sections">
         <button class="tab is-active" type="button" role="tab" aria-selected="true" data-tab="download">Download</button>
         <button class="tab" type="button" role="tab" aria-selected="false" data-tab="appearance">Appearance</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" data-tab="visitors">Visitors</button>
         <button class="tab" type="button" role="tab" aria-selected="false" data-tab="security">Security</button>
         <button class="tab" type="button" role="tab" aria-selected="false" data-tab="transfer">Transfer</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" data-tab="diagnostics">Diagnostics</button>
       </nav>
 
       <section class="tab-panel" id="panel-download" role="tabpanel">
@@ -221,6 +234,11 @@
             <label class="swatch"><input type="radio" name="accent" value="indigo"><i style="--c:#7c8cff"></i><span>Indigo</span></label>
             <label class="swatch"><input type="radio" name="accent" value="amber"><i style="--c:#ffc46b"></i><span>Amber</span></label>
             <label class="swatch"><input type="radio" name="accent" value="violet"><i style="--c:#b47bff"></i><span>Violet</span></label>
+            <label class="swatch"><input type="radio" name="accent" value="custom"><i class="rainbow"></i><span>Custom</span></label>
+          </div>
+          <div class="color-row">
+            <input type="color" id="customColor" value="#57e6c5" aria-label="Custom accent colour">
+            <small>Pick a colour, then select <strong>Custom</strong> above.</small>
           </div>
           <h2>Effects</h2>
           <label class="toggle"><span>Particle field<small>Animated dots in the hero</small></span><input type="checkbox" id="fxParticles" checked><i class="switch"></i></label>
@@ -232,6 +250,29 @@
             <a class="btn" href="index.html">Preview site</a>
           </div>
           <div class="msg" id="fxMsg"></div>
+        </form>
+      </section>
+
+      <section class="tab-panel" id="panel-visitors" role="tabpanel" hidden>
+        <h2>Visitors</h2>
+        <p class="hint">Counts page loads <strong>in this browser</strong>. A real worldwide counter needs a server or a free counter API — add one below if you want a shared number.</p>
+        <div class="meter"><b id="visitsToday">0</b><small>visits today</small></div>
+        <div class="status" style="margin-bottom:0">
+          <div><small>Yesterday</small><b id="visitsYesterday">0</b></div>
+          <div><small>Last 7 days</small><b id="visitsWeek">0</b></div>
+          <div><small>All time</small><b id="visitsTotal">0</b></div>
+          <div><small>Last visit</small><b id="visitsLast">—</b></div>
+          <div><small>Remote count</small><b id="visitsRemote">Off</b></div>
+        </div>
+        <svg class="spark" id="visitChart" viewBox="0 0 600 90" preserveAspectRatio="none" aria-label="Visits over the last 7 days" role="img"></svg>
+        <form id="counterForm">
+          <label><span>Remote counter URL (optional)</span><input id="counterInput" type="url" placeholder="https://api.countapi.xyz/hit/your-namespace/your-key"></label>
+          <div class="row">
+            <button class="primary" type="submit">Save counter</button>
+            <button type="button" id="counterTestBtn">Send test hit</button>
+            <button type="button" class="danger" id="clearVisitsBtn">Clear local history</button>
+          </div>
+          <div class="msg" id="visitorMsg"></div>
         </form>
       </section>
 
@@ -266,6 +307,17 @@
         <div class="msg" id="transferMsg"></div>
       </section>
 
+      <section class="tab-panel" id="panel-diagnostics" role="tabpanel" hidden>
+        <h2>Diagnostics</h2>
+        <p class="hint">A quick report of this browser plus a check that the site files are reachable.</p>
+        <div class="row">
+          <button type="button" id="diagRunBtn">Run file check</button>
+          <button type="button" id="diagCopyBtn">Copy report</button>
+        </div>
+        <pre class="report" id="diagReport">Ready. Click “Run file check”.</pre>
+        <div class="msg" id="diagMsg"></div>
+      </section>
+
       <p class="fine">The ISO itself must be hosted where 3.7 GB is allowed — GitHub Pages and Releases cannot store it. This console is client-side convenience, not real server security. Anyone with this page can reach it; change the access code to something only you know.</p>
     </section>
   </main>
@@ -273,9 +325,10 @@
   <script>
     const DEFAULT_ADMIN_CODE = "obryx-admin";
     const KEY = "obryxAdminConfig";
+    const VISITS_KEY = "obryxVisits";
     const DEFAULT_ISO = "Obryx-OS-0.4-Alpha4-x86_64.iso";
     const DEFAULT_HASH = "46d071d4d011ff0061a7baf3316e9689484490169a2b9ca1ca892a2e712cbefb";
-    const FX_DEFAULTS = { accent: "teal", particles: true, magnetic: true, ticker: true, backTop: true };
+    const FX_DEFAULTS = { accent: "teal", customColor: "#57e6c5", particles: true, magnetic: true, ticker: true, backTop: true };
 
     const lockView = document.getElementById("lockView");
     const adminView = document.getElementById("adminView");
@@ -288,7 +341,10 @@
     const fxMsg = document.getElementById("fxMsg");
     const codeMsg = document.getElementById("codeMsg");
     const transferMsg = document.getElementById("transferMsg");
+    const visitorMsg = document.getElementById("visitorMsg");
+    const diagMsg = document.getElementById("diagMsg");
     const urlInput = document.getElementById("urlInput");
+    const counterInput = document.getElementById("counterInput");
     const nameInput = document.getElementById("nameInput");
     const hashInput = document.getElementById("hashInput");
 
@@ -311,9 +367,11 @@
       hashInput.value = c.hash || DEFAULT_HASH;
 
       const fx = { ...FX_DEFAULTS, ...(c.appearance || {}) };
-      const accent = ["teal", "indigo", "amber", "violet"].includes(fx.accent) ? fx.accent : "teal";
+      const accent = ["teal", "indigo", "amber", "violet", "custom"].includes(fx.accent) ? fx.accent : "teal";
       const radio = document.querySelector(`input[name="accent"][value="${accent}"]`);
       if (radio) radio.checked = true;
+      document.getElementById("customColor").value = /^#[a-f0-9]{6}$/i.test(fx.customColor || "") ? fx.customColor : "#57e6c5";
+      counterInput.value = c.remoteCounterUrl || "";
       document.getElementById("fxParticles").checked = fx.particles !== false;
       document.getElementById("fxMagnetic").checked = fx.magnetic !== false;
       document.getElementById("fxTicker").checked = fx.ticker !== false;
@@ -326,6 +384,66 @@
       setStatus("statusCode", c.adminCode ? "Custom" : "Default", !c.adminCode);
       const off = ["particles", "magnetic", "ticker", "backTop"].filter((k) => fx[k] === false).length;
       setStatus("statusFx", off ? (4 - off) + " / 4 on" : "All on", !!off);
+      renderVisitors();
+    }
+
+    function dayStart(date) {
+      const d = new Date(date);
+      d.setHours(0, 0, 0, 0);
+      return d.getTime();
+    }
+
+    function visitHits() {
+      try {
+        const hits = JSON.parse(localStorage.getItem(VISITS_KEY) || "[]");
+        return Array.isArray(hits) ? hits.filter((t) => typeof t === "number") : [];
+      } catch (_) { return []; }
+    }
+
+    function renderVisitors() {
+      const hits = visitHits();
+      const today = dayStart(Date.now());
+      const dayMs = 24 * 60 * 60 * 1000;
+      const todayCount = hits.filter((t) => t >= today).length;
+      const yesterdayCount = hits.filter((t) => t >= today - dayMs && t < today).length;
+      const weekCount = hits.filter((t) => t >= today - 6 * dayMs).length;
+      const last = hits.length ? new Date(Math.max(...hits)).toLocaleString() : "—";
+      const remote = (read().remoteCounterUrl || "").trim();
+
+      document.getElementById("visitsToday").textContent = todayCount;
+      document.getElementById("visitsYesterday").textContent = yesterdayCount;
+      document.getElementById("visitsWeek").textContent = weekCount;
+      document.getElementById("visitsTotal").textContent = hits.length;
+      document.getElementById("visitsLast").textContent = last;
+      setStatus("statusVisits", String(todayCount), todayCount === 0);
+      setStatus("visitsRemote", remote ? "On" : "Off", !remote);
+      drawChart(hits, today, dayMs);
+    }
+
+    function drawChart(hits, today, dayMs) {
+      const days = Array.from({ length: 7 }, (_, i) => {
+        const start = today - (6 - i) * dayMs;
+        return {
+          label: new Date(start).toLocaleDateString(undefined, { weekday: "short" }),
+          value: hits.filter((t) => t >= start && t < start + dayMs).length
+        };
+      });
+      const max = Math.max(1, ...days.map((d) => d.value));
+      const step = 600 / 7;
+      const points = days.map((d, i) => {
+        const x = i * step + step / 2;
+        const y = 82 - (d.value / max) * 64;
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+      }).join(" ");
+      const bars = days.map((d, i) => {
+        const x = i * step + step / 2 - 18;
+        const h = (d.value / max) * 64;
+        return `<rect x="${x.toFixed(1)}" y="${(82 - h).toFixed(1)}" width="36" height="${Math.max(h, 1).toFixed(1)}" rx="5" fill="rgba(87,230,197,.28)"><title>${d.label}: ${d.value}</title></rect>`;
+      }).join("");
+      document.getElementById("visitChart").innerHTML =
+        bars +
+        `<polyline points="${points}" fill="none" stroke="var(--teal)" stroke-width="2.5" stroke-linejoin="round"/>` +
+        days.map((d, i) => `<text x="${(i * step + step / 2).toFixed(1)}" y="98" text-anchor="middle" fill="rgba(154,166,192,.75)" font-size="11" font-family="DM Mono, monospace">${d.label}</text>`).join("");
     }
 
     function setStatus(id, text, isOff) {
@@ -458,6 +576,7 @@
         ...read(),
         appearance: {
           accent: document.querySelector('input[name="accent"]:checked').value,
+          customColor: document.getElementById("customColor").value,
           particles: document.getElementById("fxParticles").checked,
           magnetic: document.getElementById("fxMagnetic").checked,
           ticker: document.getElementById("fxTicker").checked,
@@ -466,6 +585,37 @@
       });
       fill();
       message(fxMsg, "Appearance saved. Reload the main site to see it.");
+    });
+
+    document.getElementById("counterForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const url = counterInput.value.trim();
+      if (url && !/^https?:\/\//i.test(url)) {
+        message(visitorMsg, "Use an http:// or https:// URL, or leave it empty.", true);
+        return;
+      }
+      write({ ...read(), remoteCounterUrl: url });
+      renderVisitors();
+      message(visitorMsg, url ? "Remote counter saved. Each site load will send a hit." : "Remote counter disabled.");
+    });
+
+    document.getElementById("counterTestBtn").addEventListener("click", async () => {
+      const url = (read().remoteCounterUrl || "").trim();
+      if (!url) { message(visitorMsg, "Save a counter URL first.", true); return; }
+      try {
+        const response = await fetch(url, { mode: "cors", cache: "no-store" });
+        const body = await response.text();
+        message(visitorMsg, `Counter replied (${response.status}): ${body.slice(0, 120)}`);
+      } catch (error) {
+        message(visitorMsg, "Counter request failed: " + error.message, true);
+      }
+    });
+
+    document.getElementById("clearVisitsBtn").addEventListener("click", () => {
+      if (!window.confirm("Erase the visit history saved in this browser?")) return;
+      localStorage.removeItem(VISITS_KEY);
+      renderVisitors();
+      message(visitorMsg, "Local visit history cleared.", true);
     });
 
     codeForm.addEventListener("submit", (event) => {
@@ -501,8 +651,9 @@
     document.getElementById("resetAllBtn").addEventListener("click", () => {
       if (!window.confirm("Erase the link, appearance and access code saved in this browser?")) return;
       localStorage.removeItem(KEY);
+      localStorage.removeItem(VISITS_KEY);
       fill();
-      message(codeMsg, "Everything reset. The default code is back.", true);
+      message(codeMsg, "Everything reset. Code, settings and visit history are cleared.", true);
     });
 
     document.getElementById("exportBtn").addEventListener("click", () => {
@@ -511,7 +662,8 @@
         downloadUrl: c.downloadUrl || "",
         isoFilename: c.isoFilename || DEFAULT_ISO,
         hash: c.hash || DEFAULT_HASH,
-        appearance: c.appearance || FX_DEFAULTS
+        remoteCounterUrl: c.remoteCounterUrl || "",
+        appearance: { ...FX_DEFAULTS, ...(c.appearance || {}) }
       };
       const blob = new Blob([JSON.stringify(safe, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
@@ -544,6 +696,7 @@
           if (!validHash(data.hash.trim())) throw new Error("Invalid hash in file");
           c.hash = data.hash.trim();
         }
+        if (typeof data.remoteCounterUrl === "string") c.remoteCounterUrl = data.remoteCounterUrl.trim();
         if (data.appearance && typeof data.appearance === "object") {
           c.appearance = { ...FX_DEFAULTS, ...data.appearance };
         }
@@ -554,6 +707,47 @@
         message(transferMsg, "Invalid settings file: " + error.message, true);
       }
       event.target.value = "";
+    });
+
+    function buildReport() {
+      const c = read();
+      return [
+        "Obryx OS — diagnostics",
+        "Time: " + new Date().toLocaleString(),
+        "Page: " + location.href,
+        "User agent: " + navigator.userAgent,
+        "Viewport: " + window.innerWidth + " x " + window.innerHeight + " (DPR " + window.devicePixelRatio + ")",
+        "Screen: " + screen.width + " x " + screen.height,
+        "Online: " + navigator.onLine,
+        "Reduced motion: " + window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+        "Touch / no hover: " + window.matchMedia("(hover: none) and (pointer: coarse)").matches,
+        "Local storage: " + (typeof localStorage !== "undefined"),
+        "Download link: " + (c.downloadUrl || "not set"),
+        "ISO file: " + (c.isoFilename || DEFAULT_ISO),
+        "Hash: " + (c.hash || "not set"),
+        "Appearance: " + JSON.stringify({ ...FX_DEFAULTS, ...(c.appearance || {}) }),
+        "Remote counter: " + (c.remoteCounterUrl || "off"),
+        "Local visits: " + visitHits().length
+      ].join("\n");
+    }
+
+    document.getElementById("diagRunBtn").addEventListener("click", async () => {
+      const files = ["index.html", "styles.css", "enhance.css", "ultra.css", "script.js", "admin.html"];
+      const lines = await Promise.all(files.map(async (file) => {
+        try {
+          const response = await fetch(file + "?diag=" + Date.now(), { cache: "no-store" });
+          return `${response.ok ? "OK  " : "FAIL"} ${file} (${response.status})`;
+        } catch (error) {
+          return `FAIL ${file} (${error.message})`;
+        }
+      }));
+      document.getElementById("diagReport").textContent = buildReport() + "\n\nSite files:\n" + lines.join("\n");
+      message(diagMsg, "File check finished.");
+    });
+
+    document.getElementById("diagCopyBtn").addEventListener("click", async () => {
+      const ok = await copyText(document.getElementById("diagReport").textContent);
+      message(diagMsg, ok ? "Report copied." : "Copy failed — select the report manually.", !ok);
     });
   </script>
 </body>
