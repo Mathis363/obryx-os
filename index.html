@@ -11,10 +11,29 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=3">
-  <link rel="stylesheet" href="enhance.css?v=7">
-  <script src="script.js?v=3" defer></script>
+  <link rel="stylesheet" href="enhance.css?v=8">
+  <script src="script.js?v=5" defer></script>
 </head>
 <body>
+  <!-- Desktop-only gate: shown automatically on phones and tablets. -->
+  <div class="device-gate" id="deviceGate" hidden role="dialog" aria-modal="true" aria-labelledby="deviceGateTitle">
+    <div class="device-gate__grid" aria-hidden="true"></div>
+    <div class="device-gate__card">
+      <div class="device-gate__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="2.5" y="4" width="19" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 21h8m-4-4v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </div>
+      <span class="kicker kicker--amber">Desktop only</span>
+      <h2 id="deviceGateTitle">Obryx OS is for PCs.</h2>
+      <p>Obryx OS is a Linux distribution for <strong>64-bit (x86_64) UEFI computers</strong>. This site is built for a desktop screen, so it can't be opened on a phone or tablet.</p>
+      <ul class="device-gate__list">
+        <li><span></span> 64-bit PC with UEFI</li>
+        <li><span></span> 4 GB RAM · 8 GB recommended</li>
+        <li><span></span> Runs live from USB — Windows untouched</li>
+      </ul>
+      <p class="device-gate__foot">Please open this page on a computer.</p>
+    </div>
+  </div>
+
   <a class="skip-link" href="#main">Skip to content</a>
   <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
 

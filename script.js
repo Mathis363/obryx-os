@@ -19,6 +19,7 @@ let lightboxItems = [];
 let lightboxIndex = 0;
 
 document.addEventListener("DOMContentLoaded", () => {
+  setupDeviceGate();
   setupDownloadButtons();
   setupDownloadModal();
   setupNavigation();
@@ -31,6 +32,26 @@ document.addEventListener("DOMContentLoaded", () => {
   setupScreenshots();
   setupLightbox();
 });
+
+/* ── Desktop-only gate: block phones and tablets ───────────── */
+function setupDeviceGate() {
+  const gate = document.getElementById("deviceGate");
+  if (!gate) return;
+
+  const query = window.matchMedia("(max-width: 820px), (hover: none) and (pointer: coarse)");
+  const apply = () => {
+    const blocked = query.matches;
+    gate.hidden = !blocked;
+    document.body.classList.toggle("is-gated", blocked);
+    document.querySelectorAll("#main, .site-header, .site-footer").forEach((el) => {
+      el.inert = blocked;
+    });
+  };
+
+  apply();
+  if (query.addEventListener) query.addEventListener("change", apply);
+  else if (query.addListener) query.addListener(apply);
+}
 
 /* ── Download buttons: warning first, then redirect ────────── */
 function setupDownloadButtons() {

@@ -53,7 +53,7 @@ body::after {
   content: "OBRYX";
   position: absolute;
   top: 5%;
-  right: -1.5vw;
+  right: 0;
   z-index: -1;
   font-size: clamp(9rem, 19vw, 20rem);
   font-weight: 700;
@@ -295,9 +295,9 @@ body::after {
   user-select: none;
 }
 .ghost-number i { font-style: normal; }
-/* The "1" glyph sits a little high in Space Grotesk — nudge the second digit down. */
-.ghost-number i + i { transform: translateY(5px); }
-.section-head--split .ghost-number { right: auto; left: -24px; top: -76px; }
+/* Negative letter-spacing tucks the second digit under the first — push it right. */
+.ghost-number i + i { transform: translateX(8px); }
+.section-head--split .ghost-number { right: 0; left: auto; top: -76px; }
 
 /* ── Bento requirement cards ───────────────────────────────── */
 .requirements-section::before {
@@ -505,6 +505,61 @@ kbd {
   color: var(--muted);
 }
 
+/* ── Desktop-only gate (phones / tablets) ──────────────────── */
+.device-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background:
+    radial-gradient(600px 380px at 50% 20%, rgba(124, 140, 255, .14), transparent 70%),
+    linear-gradient(160deg, #080d18, #04070e);
+  overflow: hidden;
+}
+.device-gate[hidden] { display: none; }
+body.is-gated { overflow: hidden; }
+.device-gate__grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, .035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, .035) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: radial-gradient(circle at 50% 45%, #000, transparent 75%);
+  -webkit-mask-image: radial-gradient(circle at 50% 45%, #000, transparent 75%);
+  pointer-events: none;
+}
+.device-gate__card {
+  position: relative;
+  width: min(100%, 460px);
+  padding: clamp(26px, 6vw, 40px);
+  border: 1px solid rgba(255, 196, 107, .3);
+  border-radius: 24px;
+  background: linear-gradient(150deg, rgba(20, 26, 40, .96), rgba(9, 13, 24, .98));
+  box-shadow: 0 40px 100px rgba(0, 0, 0, .6), inset 0 1px 0 rgba(255, 255, 255, .06);
+  animation: modal-in .45s var(--ease);
+}
+.device-gate__icon {
+  display: grid;
+  place-items: center;
+  width: 56px; height: 56px;
+  margin-bottom: 22px;
+  border: 1px solid rgba(255, 196, 107, .35);
+  border-radius: 16px;
+  background: rgba(255, 196, 107, .1);
+  color: var(--amber);
+}
+.device-gate__icon svg { width: 28px; height: 28px; }
+.device-gate__card h2 { font-size: clamp(1.7rem, 6vw, 2.2rem); letter-spacing: -.05em; margin-bottom: 12px; }
+.device-gate__card p { color: #c3cadb; font-size: .92rem; }
+.device-gate__card strong { color: #fff; }
+.device-gate__list { display: grid; gap: 10px; margin: 24px 0; }
+.device-gate__list li { display: flex; align-items: flex-start; gap: 10px; font-size: .83rem; color: #ecd9bd; }
+.device-gate__list span { flex: 0 0 6px; height: 6px; margin-top: 9px; border-radius: 50%; background: var(--amber); }
+.device-gate__foot { margin-top: 18px !important; font-size: .75rem !important; color: var(--muted-dim) !important; }
+
 /* ── Responsive adjustments for the showcase layer ────────── */
 @media (max-width: 1060px) {
   .req-grid { grid-template-columns: repeat(2, 1fr); }
@@ -546,5 +601,5 @@ kbd {
   .gradient-text, .btn--primary::after, .aurora::after,
   .dp-orb, .dp-orb::before, .dp-orb::after, .dock,
   .dp-console p, .code-card::after, .cta-card::before,
-  .modal-card, .modal-backdrop { animation: none !important; }
+  .modal-card, .modal-backdrop, .device-gate__card { animation: none !important; }
 }
