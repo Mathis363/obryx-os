@@ -215,7 +215,7 @@ function setupHeroPointer() {
 
 /* ── Screenshots: drop files in assets/screenshots/ and they
       appear automatically — no HTML edit needed for existing
-      slots. Names: 01-desktop.png, 02-apps.png, 03-settings.png ── */
+      slots. Names: obryx-shot-01.png, obryx-shot-02.png, obryx-shot-03.png ── */
 function setupScreenshots() {
   document.querySelectorAll(".shot-img[data-shot]").forEach((img) => {
     const src = img.dataset.shot;

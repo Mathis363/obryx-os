@@ -29,7 +29,7 @@ Le hash affiché (`46d071d4d011ff0…`) et le nom de fichier sont également dé
 
 ## 2. Ajouter les captures d'écran
 
-Voir [`assets/screenshots/README.md`](assets/screenshots/README.md). En résumé : dépose `01-desktop.png`, `02-apps.png` et `03-settings.png` dans ce dossier, puis recharge la page. Les images apparaissent automatiquement.
+Voir [`assets/screenshots/README.md`](assets/screenshots/README.md). En résumé : dépose `obryx-shot-01.png`, `obryx-shot-02.png` et `obryx-shot-03.png` dans ce dossier, puis recharge la page. Les images apparaissent automatiquement.
 
 ## 3. Modifier le contenu
 

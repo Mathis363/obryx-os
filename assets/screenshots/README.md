@@ -4,13 +4,13 @@ Les 7 captures envoyées sont intégrées à la galerie, dans l'ordre reçu :
 
 | Fichier | Carte |
 | --- | --- |
-| `01-desktop.png` | Screenshot 01 |
-| `02-apps.png` | Screenshot 02 |
-| `03-settings.png` | Screenshot 03 |
-| `04-desktop-2.png` | Screenshot 04 |
-| `05-apps-2.png` | Screenshot 05 |
-| `06-settings-2.png` | Screenshot 06 |
-| `07-desktop-3.png` | Screenshot 07 |
+| `obryx-shot-01.png` | Screenshot 01 |
+| `obryx-shot-02.png` | Screenshot 02 |
+| `obryx-shot-03.png` | Screenshot 03 |
+| `obryx-shot-04.png` | Screenshot 04 |
+| `obryx-shot-05.png` | Screenshot 05 |
+| `obryx-shot-06.png` | Screenshot 06 |
+| `obryx-shot-07.png` | Screenshot 07 |
 
 Elles sont toutes en 1280 × 800 (format 16:10), ce qui correspond exactement au format des cartes. Un clic sur une image l'ouvre en grand.
 
