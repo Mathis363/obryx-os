@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Obryx OS — Private console · v3</title>
+  <title>Obryx OS — Private console · v3.2</title>
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -87,7 +87,7 @@
     h1 { font-size: clamp(1.9rem, 5vw, 2.5rem); letter-spacing: -.05em; line-height: 1.08; margin: 0 0 10px; }
     h2 { margin: 0 0 16px; font-size: 1.12rem; letter-spacing: -.03em; color: var(--amber); }
     p.lead { color: var(--muted); font-size: .92rem; line-height: 1.6; margin: 0 0 24px; }
-    .status { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 0 0 26px; }
+    .status { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin: 0 0 26px; }
     .status div { padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: rgba(255,255,255,.03); }
     .status small { display: block; margin-bottom: 5px; font-family: var(--mono); font-size: .58rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
     .status b { font-family: var(--mono); font-size: .74rem; font-weight: 500; color: var(--teal); }
@@ -150,6 +150,15 @@
     .meter { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
     .meter b { font-family: var(--mono); font-size: 1.5rem; color: var(--teal); }
     .meter small { font-family: var(--mono); font-size: .65rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); }
+    .gallery-admin { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin: 0 0 20px; }
+    .gallery-item { padding: 9px; border: 1px solid var(--border); border-radius: 13px; background: rgba(255,255,255,.025); }
+    .gallery-thumb { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; background: rgba(255,255,255,.04); cursor: pointer; }
+    .gallery-name { display: block; margin: 9px 0 3px; font-size: .76rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .gallery-src { display: block; margin-bottom: 9px; font-family: var(--mono); font-size: .58rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .gallery-actions { display: flex; flex-wrap: wrap; gap: 5px; }
+    .gallery-actions button { padding: 6px 8px; font-size: .66rem; }
+    .gallery-actions button.danger { color: var(--red); }
+    .storage-note { margin: -6px 0 18px; font-family: var(--mono); font-size: .65rem; color: var(--muted); }
     .toggle { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 12px; padding: 13px 15px; border: 1px solid var(--border); border-radius: 12px; background: rgba(255,255,255,.025); cursor: pointer; }
     .toggle span:first-child { font-size: .85rem; }
     .toggle small { display: block; margin-top: 3px; font-size: .68rem; color: var(--muted); }
@@ -178,7 +187,7 @@
 <body>
   <main class="shell">
     <section id="lockView" class="panel">
-      <div class="mark"><i></i> Obryx OS // private console <span class="ver">v3</span></div>
+      <div class="mark"><i></i> Obryx OS // private console <span class="ver">v3.2</span></div>
       <h1>Private settings.</h1>
       <p class="lead">Enter your code to change the download link, the look and the behaviour of the main site in this browser.</p>
       <form id="lockForm">
@@ -189,10 +198,10 @@
     </section>
 
     <section id="adminView" class="panel" hidden>
-      <div class="mark"><i></i> Obryx OS // private console <span class="ver">v3</span></div>
+      <div class="mark"><i></i> Obryx OS // private console <span class="ver">v3.2</span></div>
       <h1>Control center.</h1>
       <p class="lead">Everything is saved in <strong>this browser only</strong>. Reload the main site after a change.</p>
-      <div class="whats-new"><b>What's new in v3</b><span>Visitors tab (today / 7 days / chart + optional worldwide counter), Diagnostics tab, custom accent colour. If you don't see these tabs, hard-refresh with Ctrl + F5.</span></div>
+      <div class="whats-new"><b>What's new in v3.2</b><span>New Gallery tab: view, delete, reorder and add screenshots. Visitors, Diagnostics and custom colour are still here. Hard-refresh with Ctrl + F5 if needed.</span></div>
 
       <div class="status" id="statusGrid" aria-live="polite">
         <div><small>Link</small><b id="statusLink">Not set</b></div>
@@ -200,12 +209,14 @@
         <div><small>Access</small><b id="statusCode">Default</b></div>
         <div><small>Effects</small><b id="statusFx">All on</b></div>
         <div><small>Visits today</small><b id="statusVisits">0</b></div>
+        <div><small>Gallery</small><b id="statusGallery">7</b></div>
       </div>
 
       <nav class="tabs" role="tablist" aria-label="Console sections">
         <button class="tab is-active" type="button" role="tab" aria-selected="true" data-tab="download">Download</button>
         <button class="tab" type="button" role="tab" aria-selected="false" data-tab="appearance">Appearance</button>
         <button class="tab" type="button" role="tab" aria-selected="false" data-tab="visitors">Visitors</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" data-tab="gallery">Gallery</button>
         <button class="tab" type="button" role="tab" aria-selected="false" data-tab="security">Security</button>
         <button class="tab" type="button" role="tab" aria-selected="false" data-tab="transfer">Transfer</button>
         <button class="tab" type="button" role="tab" aria-selected="false" data-tab="diagnostics">Diagnostics</button>
@@ -284,6 +295,23 @@
         </form>
       </section>
 
+      <section class="tab-panel" id="panel-gallery" role="tabpanel" hidden>
+        <h2>Screenshots</h2>
+        <p class="hint">See, remove, reorder or add the shots shown on the public site. Uploads are resized and stored in <strong>this browser only</strong> — use Transfer to share the set.</p>
+        <div class="gallery-admin" id="galleryList"></div>
+        <p class="storage-note" id="galleryStorage">0 screenshots</p>
+        <form id="galleryForm">
+          <label><span>Image file</span><input id="galleryFile" type="file" accept="image/*"></label>
+          <label><span>Or an image URL / local filename</span><input id="galleryUrl" type="text" placeholder="https://…/shot.png  or  assets/screenshots/obryx-shot-08.png"></label>
+          <label><span>Title (optional)</span><input id="galleryTitle" type="text" placeholder="My screenshot"></label>
+          <div class="row">
+            <button class="primary" type="submit">Add screenshot</button>
+            <button type="button" id="galleryResetBtn">Restore defaults</button>
+          </div>
+          <div class="msg" id="galleryMsg"></div>
+        </form>
+      </section>
+
       <section class="tab-panel" id="panel-security" role="tabpanel" hidden>
         <form id="codeForm">
           <h2>Change access code</h2>
@@ -302,7 +330,7 @@
 
       <section class="tab-panel" id="panel-transfer" role="tabpanel" hidden>
         <h2>Move settings to another device</h2>
-        <p class="hint">Export a file, send it to your friend, then import it here on their browser. Their code is never included.</p>
+        <p class="hint">Export a file, send it to your friend, then import it here on their browser. Settings and the screenshot gallery are included; the access code is never included.</p>
         <div class="row">
           <button class="primary" type="button" id="exportBtn">Export settings</button>
           <button type="button" id="summaryBtn">Copy link + hash</button>
@@ -337,6 +365,15 @@
     const DEFAULT_ISO = "Obryx-OS-0.4-Alpha4-x86_64.iso";
     const DEFAULT_HASH = "46d071d4d011ff0061a7baf3316e9689484490169a2b9ca1ca892a2e712cbefb";
     const FX_DEFAULTS = { accent: "teal", customColor: "#57e6c5", particles: true, magnetic: true, ticker: true, backTop: true };
+    const DEFAULT_GALLERY = Array.from({ length: 7 }, (_, i) => {
+      const n = String(i + 1).padStart(2, "0");
+      return {
+        src: `assets/screenshots/obryx-shot-${n}.png`,
+        title: `Screenshot ${n}`,
+        caption: "Obryx OS 0.4 Alpha4 · live session",
+        alt: `Obryx OS screenshot ${i + 1}`
+      };
+    });
 
     const lockView = document.getElementById("lockView");
     const adminView = document.getElementById("adminView");
@@ -350,6 +387,7 @@
     const codeMsg = document.getElementById("codeMsg");
     const transferMsg = document.getElementById("transferMsg");
     const visitorMsg = document.getElementById("visitorMsg");
+    const galleryMsg = document.getElementById("galleryMsg");
     const diagMsg = document.getElementById("diagMsg");
     const urlInput = document.getElementById("urlInput");
     const counterInput = document.getElementById("counterInput");
@@ -393,6 +431,7 @@
       const off = ["particles", "magnetic", "ticker", "backTop"].filter((k) => fx[k] === false).length;
       setStatus("statusFx", off ? (4 - off) + " / 4 on" : "All on", !!off);
       renderVisitors();
+      renderGallery();
     }
 
     function dayStart(date) {
@@ -452,6 +491,107 @@
         bars +
         `<polyline points="${points}" fill="none" stroke="var(--teal)" stroke-width="2.5" stroke-linejoin="round"/>` +
         days.map((d, i) => `<text x="${(i * step + step / 2).toFixed(1)}" y="98" text-anchor="middle" fill="rgba(154,166,192,.75)" font-size="11" font-family="DM Mono, monospace">${d.label}</text>`).join("");
+    }
+
+    function galleryItems() {
+      const c = read();
+      const source = Array.isArray(c.gallery) ? c.gallery : DEFAULT_GALLERY;
+      return source.slice(0, 40).filter((item) => {
+        if (!item || typeof item.src !== "string" || !item.src.trim()) return false;
+        const src = item.src.trim();
+        if (/^javascript:/i.test(src)) return false;
+        return /^(data:image\/|https?:\/\/|file:|\.\/|\/)/i.test(src) || !/^[a-z][a-z0-9+.-]*:/i.test(src);
+      }).map((item, index) => ({
+        src: item.src.trim(),
+        title: (item.title || `Screenshot ${String(index + 1).padStart(2, "0")}`).toString().slice(0, 80),
+        caption: (item.caption || "Custom screenshot").toString().slice(0, 120),
+        alt: (item.alt || item.title || `Screenshot ${index + 1}`).toString().slice(0, 120)
+      }));
+    }
+
+    function saveGallery(items) {
+      write({ ...read(), gallery: items });
+      fill();
+    }
+
+    function renderGallery() {
+      const list = document.getElementById("galleryList");
+      const items = galleryItems();
+      list.innerHTML = "";
+
+      items.forEach((item, index) => {
+        const card = document.createElement("div");
+        card.className = "gallery-item";
+
+        const img = document.createElement("img");
+        img.className = "gallery-thumb";
+        img.src = item.src;
+        img.alt = item.alt;
+        img.title = "Open full size";
+        img.dataset.action = "view";
+        img.dataset.index = index;
+
+        const name = document.createElement("span");
+        name.className = "gallery-name";
+        name.textContent = item.title;
+
+        const src = document.createElement("span");
+        src.className = "gallery-src";
+        src.textContent = item.src.startsWith("data:") ? "Uploaded image" : item.src;
+        src.title = item.src;
+
+        const actions = document.createElement("div");
+        actions.className = "gallery-actions";
+        [
+          ["view", "View"],
+          ["up", "↑"],
+          ["down", "↓"],
+          ["remove", "Delete"]
+        ].forEach(([action, label]) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = action === "remove" ? "small danger" : "small";
+          button.textContent = label;
+          button.dataset.action = action;
+          button.dataset.index = index;
+          if (action === "up" && index === 0) button.disabled = true;
+          if (action === "down" && index === items.length - 1) button.disabled = true;
+          actions.appendChild(button);
+        });
+
+        card.appendChild(img);
+        card.appendChild(name);
+        card.appendChild(src);
+        card.appendChild(actions);
+        list.appendChild(card);
+      });
+
+      const size = Math.round(JSON.stringify(items).length / 1024);
+      document.getElementById("galleryStorage").textContent =
+        `${items.length} screenshot${items.length === 1 ? "" : "s"} · about ${size} KB in this browser`;
+      setStatus("statusGallery", String(items.length), items.length === 0);
+    }
+
+    function resizeImage(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error("Could not read the file."));
+        reader.onload = () => {
+          const image = new Image();
+          image.onerror = () => reject(new Error("That file is not a readable image."));
+          image.onload = () => {
+            const max = 1400;
+            const scale = Math.min(1, max / Math.max(image.width, image.height));
+            const canvas = document.createElement("canvas");
+            canvas.width = Math.round(image.width * scale);
+            canvas.height = Math.round(image.height * scale);
+            canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
+            resolve(canvas.toDataURL("image/jpeg", 0.78));
+          };
+          image.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      });
     }
 
     function setStatus(id, text, isOff) {
@@ -626,6 +766,79 @@
       message(visitorMsg, "Local visit history cleared.", true);
     });
 
+    document.getElementById("galleryList").addEventListener("click", (event) => {
+      const target = event.target.closest("[data-action]");
+      if (!target) return;
+      const action = target.dataset.action;
+      const index = Number(target.dataset.index);
+      const items = galleryItems();
+      const item = items[index];
+      if (!item) return;
+
+      if (action === "view") {
+        window.open(item.src, "_blank", "noopener");
+        return;
+      }
+      if (action === "remove") {
+        items.splice(index, 1);
+        saveGallery(items);
+        message(galleryMsg, "Screenshot removed from this browser's gallery.");
+        return;
+      }
+      const swapWith = action === "up" ? index - 1 : index + 1;
+      if (swapWith < 0 || swapWith >= items.length) return;
+      [items[index], items[swapWith]] = [items[swapWith], items[index]];
+      saveGallery(items);
+      message(galleryMsg, "Order updated.");
+    });
+
+    document.getElementById("galleryFile").addEventListener("change", (event) => {
+      const file = event.target.files && event.target.files[0];
+      if (file && !document.getElementById("galleryTitle").value.trim()) {
+        document.getElementById("galleryTitle").value = file.name.replace(/\.[^.]+$/, "");
+      }
+    });
+
+    document.getElementById("galleryForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const file = document.getElementById("galleryFile").files[0];
+      const raw = document.getElementById("galleryUrl").value.trim();
+      const title = document.getElementById("galleryTitle").value.trim();
+      const items = galleryItems();
+      if (items.length >= 40) { message(galleryMsg, "Maximum 40 screenshots.", true); return; }
+
+      let src = raw;
+      if (file) {
+        try { src = await resizeImage(file); }
+        catch (error) { message(galleryMsg, error.message, true); return; }
+      } else if (!raw) {
+        message(galleryMsg, "Choose a file or paste an image URL.", true);
+        return;
+      }
+      if (/^javascript:/i.test(src)) { message(galleryMsg, "That URL is not allowed.", true); return; }
+
+      const name = title || `Screenshot ${String(items.length + 1).padStart(2, "0")}`;
+      items.push({
+        src,
+        title: name,
+        caption: file ? "Uploaded image" : "Custom screenshot",
+        alt: name
+      });
+      try {
+        saveGallery(items);
+        document.getElementById("galleryForm").reset();
+        message(galleryMsg, "Screenshot added. Reload the main site to see it.");
+      } catch (error) {
+        message(galleryMsg, "Browser storage is full — use a URL instead of an upload.", true);
+      }
+    });
+
+    document.getElementById("galleryResetBtn").addEventListener("click", () => {
+      if (!window.confirm("Restore the original 7 screenshots?")) return;
+      saveGallery(DEFAULT_GALLERY.map((item) => ({ ...item })));
+      message(galleryMsg, "Original gallery restored.");
+    });
+
     codeForm.addEventListener("submit", (event) => {
       event.preventDefault();
       const current = document.getElementById("currentCode").value;
@@ -671,7 +884,8 @@
         isoFilename: c.isoFilename || DEFAULT_ISO,
         hash: c.hash || DEFAULT_HASH,
         remoteCounterUrl: c.remoteCounterUrl || "",
-        appearance: { ...FX_DEFAULTS, ...(c.appearance || {}) }
+        appearance: { ...FX_DEFAULTS, ...(c.appearance || {}) },
+        gallery: galleryItems()
       };
       const blob = new Blob([JSON.stringify(safe, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
@@ -708,6 +922,13 @@
         if (data.appearance && typeof data.appearance === "object") {
           c.appearance = { ...FX_DEFAULTS, ...data.appearance };
         }
+        if (Array.isArray(data.gallery)) {
+          c.gallery = data.gallery.slice(0, 40).filter((item) => {
+            if (!item || typeof item.src !== "string" || !item.src.trim()) return false;
+            const src = item.src.trim();
+            return !/^javascript:/i.test(src) && (/^(data:image\/|https?:\/\/|file:|\.\/|\/)/i.test(src) || !/^[a-z][a-z0-9+.-]*:/i.test(src));
+          });
+        }
         write(c);
         fill();
         message(transferMsg, "Imported. Reload the main site to apply it.");
@@ -735,7 +956,8 @@
         "Hash: " + (c.hash || "not set"),
         "Appearance: " + JSON.stringify({ ...FX_DEFAULTS, ...(c.appearance || {}) }),
         "Remote counter: " + (c.remoteCounterUrl || "off"),
-        "Local visits: " + visitHits().length
+        "Local visits: " + visitHits().length,
+        "Gallery screenshots: " + galleryItems().length
       ].join("\n");
     }
 

@@ -10,6 +10,16 @@
 const ADMIN_CONFIG_KEY = "obryxAdminConfig";
 const VISIT_KEY = "obryxVisits";
 
+const DEFAULT_GALLERY = Array.from({ length: 7 }, (_, index) => {
+  const number = String(index + 1).padStart(2, "0");
+  return {
+    src: `assets/screenshots/obryx-shot-${number}.png`,
+    title: `Screenshot ${number}`,
+    caption: "Obryx OS 0.4 Alpha4 · live session",
+    alt: `Obryx OS screenshot ${index + 1}`
+  };
+});
+
 const DEFAULT_APPEARANCE = {
   accent: "teal",
   particles: true,
@@ -19,6 +29,7 @@ const DEFAULT_APPEARANCE = {
 };
 
 let APPEARANCE = { ...DEFAULT_APPEARANCE, customColor: "#57e6c5" };
+let GALLERY_ITEMS = DEFAULT_GALLERY.map((item) => ({ ...item }));
 let DOWNLOAD_URL = "";
 let REMOTE_COUNTER_URL = "";
 let ISO_FILENAME = "Obryx-OS-0.4-Alpha4-x86_64.iso";
@@ -67,7 +78,28 @@ function loadAdminConfig() {
     APPEARANCE = { ...DEFAULT_APPEARANCE, customColor: "#57e6c5", ...saved.appearance };
   }
   if (typeof saved.remoteCounterUrl === "string") REMOTE_COUNTER_URL = saved.remoteCounterUrl.trim();
+  if (Array.isArray(saved.gallery)) GALLERY_ITEMS = normalizeGallery(saved.gallery);
   applyAppearance();
+}
+
+function normalizeGallery(list) {
+  return list.slice(0, 40).filter((item) => {
+    if (!item || typeof item.src !== "string" || !item.src.trim()) return false;
+    const src = item.src.trim();
+    if (/^javascript:/i.test(src)) return false;
+    return /^(data:image\/|https?:\/\/|file:|\.\/|\/)/i.test(src) || !/^[a-z][a-z0-9+.-]*:/i.test(src);
+  }).map((item, index) => {
+    const src = item.src.trim();
+    const fallback = `Screenshot ${String(index + 1).padStart(2, "0")}`;
+    return {
+      src,
+      title: typeof item.title === "string" && item.title.trim() ? item.title.trim().slice(0, 80) : fallback,
+      caption: typeof item.caption === "string" && item.caption.trim() ? item.caption.trim().slice(0, 120) : "Custom screenshot",
+      alt: typeof item.alt === "string" && item.alt.trim()
+        ? item.alt.trim().slice(0, 120)
+        : (typeof item.title === "string" && item.title.trim() ? item.title.trim().slice(0, 120) : fallback)
+    };
+  });
 }
 
 function applyAppearance() {
@@ -466,24 +498,54 @@ function setupTilt() {
 
 /* ── Screenshots ───────────────────────────────────────────── */
 function setupScreenshots() {
-  const images = [...document.querySelectorAll(".shot-img[data-shot]")];
-  lightboxItems = images.map((img, index) => ({
-    src: img.dataset.shot || img.getAttribute("src"),
-    alt: img.alt || `Obryx OS screenshot ${index + 1}`
-  }));
+  const grid = document.querySelector(".shots-grid");
+  const note = document.querySelector(".gallery-note");
+  if (!grid) return;
 
-  images.forEach((img, index) => {
+  if (!GALLERY_ITEMS.length) {
+    grid.innerHTML = "";
+    if (note) note.textContent = "No screenshots are configured. Add some from the private admin console.";
+    lightboxItems = [];
+    return;
+  }
+
+  grid.innerHTML = "";
+  lightboxItems = GALLERY_ITEMS.map((item) => ({ src: item.src, alt: item.alt || item.title }));
+
+  GALLERY_ITEMS.forEach((item, index) => {
+    const figure = document.createElement("figure");
+    figure.className = "shot reveal is-visible";
+    figure.style.setProperty("--delay", `${(index % 3) * 0.06}s`);
+
+    const frame = document.createElement("div");
+    frame.className = "shot-frame";
+
+    const img = document.createElement("img");
+    img.className = "shot-img";
+    img.dataset.shot = item.src;
+    img.src = item.src;
+    img.alt = item.alt || item.title;
+    img.loading = "lazy";
     img.addEventListener("click", () => openLightbox(index));
 
-    // Keep illustrated fallback if an image is ever missing.
     const probe = new Image();
-    probe.onerror = () => {
-      img.hidden = true;
-      const placeholder = img.parentElement.querySelector(".shot-placeholder");
-      if (placeholder) placeholder.hidden = false;
-    };
-    probe.src = img.dataset.shot;
+    probe.onerror = () => { img.hidden = true; };
+    probe.src = item.src;
+
+    frame.appendChild(img);
+    const caption = document.createElement("figcaption");
+    const title = document.createElement("strong");
+    title.textContent = item.title;
+    const sub = document.createElement("span");
+    sub.textContent = item.caption;
+    caption.appendChild(title);
+    caption.appendChild(sub);
+    figure.appendChild(frame);
+    figure.appendChild(caption);
+    grid.appendChild(figure);
   });
+
+  if (note) note.textContent = `${GALLERY_ITEMS.length} screenshot${GALLERY_ITEMS.length === 1 ? "" : "s"} in this gallery.`;
 }
 
 /* ── Screenshot lightbox with navigation ──────────────────── */
