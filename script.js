@@ -9,6 +9,15 @@
 
 const ADMIN_CONFIG_KEY = "obryxAdminConfig";
 
+const DEFAULT_APPEARANCE = {
+  accent: "teal",
+  particles: true,
+  magnetic: true,
+  ticker: true,
+  backTop: true
+};
+
+let APPEARANCE = { ...DEFAULT_APPEARANCE };
 let DOWNLOAD_URL = "";
 let ISO_FILENAME = "Obryx-OS-0.4-Alpha4-x86_64.iso";
 let EXPECTED_HASH = "46d071d4d011ff0061a7baf3316e9689484490169a2b9ca1ca892a2e712cbefb";
@@ -49,6 +58,22 @@ function loadAdminConfig() {
   if (typeof saved.isoFilename === "string" && saved.isoFilename.trim()) ISO_FILENAME = saved.isoFilename.trim();
   if (typeof saved.hash === "string" && saved.hash.trim()) EXPECTED_HASH = saved.hash.trim();
   VERIFY_COMMAND = buildVerifyCommand();
+
+  if (saved.appearance && typeof saved.appearance === "object") {
+    APPEARANCE = { ...DEFAULT_APPEARANCE, ...saved.appearance };
+  }
+  applyAppearance();
+}
+
+function applyAppearance() {
+  const root = document.documentElement;
+  const accent = ["teal", "indigo", "amber", "violet"].includes(APPEARANCE.accent)
+    ? APPEARANCE.accent
+    : "teal";
+  root.dataset.accent = accent;
+  root.classList.toggle("no-particles", APPEARANCE.particles === false);
+  root.classList.toggle("no-ticker", APPEARANCE.ticker === false);
+  root.classList.toggle("no-back-top", APPEARANCE.backTop === false);
 }
 
 function isLocalNameOnHostedSite() {
@@ -461,7 +486,6 @@ function closeLightbox() {
 /* ── ULTRA layer: particles, cursor aura, magnetic buttons ─── */
 function setupUltra() {
   setupParticleField();
-  setupCursorGlow();
   setupMagneticButtons();
 }
 
@@ -477,7 +501,7 @@ function setupParticleField() {
   const canvas = document.getElementById("particleField");
   const hero = document.querySelector(".hero");
   const ctx = canvas && canvas.getContext ? canvas.getContext("2d") : null;
-  if (!canvas || !hero || !ctx) return;
+  if (!canvas || !hero || !ctx || APPEARANCE.particles === false) return;
 
   const still = prefersLessMotion();
   let width = 0;
@@ -574,22 +598,8 @@ function setupParticleField() {
   });
 }
 
-function setupCursorGlow() {
-  const glow = document.getElementById("cursorGlow");
-  if (!glow || !hasFinePointer() || prefersLessMotion()) return;
-
-  window.addEventListener("pointermove", (event) => {
-    const x = event.clientX - 190;
-    const y = event.clientY - 190;
-    glow.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-  }, { passive: true });
-
-  document.addEventListener("pointerleave", () => { glow.style.opacity = "0"; });
-  document.addEventListener("pointerenter", () => { glow.style.opacity = "1"; });
-}
-
 function setupMagneticButtons() {
-  if (!hasFinePointer() || prefersLessMotion()) return;
+  if (!hasFinePointer() || prefersLessMotion() || APPEARANCE.magnetic === false) return;
 
   document.querySelectorAll(".btn--primary").forEach((button) => {
     button.setAttribute("data-magnetic", "");

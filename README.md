@@ -25,7 +25,15 @@ const DOWNLOAD_URL = "https://exemple.com/Obryx-OS-0.4-Alpha4-x86_64.iso";
 
 Tous les boutons « Download » affichent d'abord la fenêtre d'avertissement beta. Après « I agree — download ISO », le fichier est téléchargé dans le dossier Downloads — **aucune redirection vers le dépôt**.
 
-Le lien, le nom de fichier et le hash se règlent depuis `admin.html` (code par défaut : `obryx-admin`, à changer dans le fichier). Ils sont sauvegardés dans le `localStorage` **de ton navigateur uniquement** : les autres visiteurs n'ont aucun lien configuré. Si aucun lien n'est sauvegardé, le bouton affiche un avertissement au lieu de télécharger.
+Le lien, le nom de fichier et le hash se règlent depuis `admin.html` (code par défaut : `obryx-admin`, à changer dans l'interface). Ils sont sauvegardés dans le `localStorage` **de ton navigateur uniquement** : les autres visiteurs n'ont aucun lien configuré. Si aucun lien n'est sauvegardé, le bouton affiche un avertissement au lieu de télécharger.
+
+La console admin contient quatre onglets :
+- **Download** : presets GoFile / URL directe / fichier local, validation SHA-256, copie du lien et du hash.
+- **Appearance** : couleur d'accent (teal / indigo / amber / violet) et activation des particules, boutons magnétiques, ticker et bouton « retour en haut ».
+- **Security** : changement du code, verrouillage immédiat, reset complet.
+- **Transfer** : export/import d'un fichier `obryx-settings.json` pour passer la configuration à un ami sans hébergement (le code d'accès n'est jamais exporté).
+
+L'aura qui suivait le curseur a été supprimée.
 
 Le hash affiché (`46d071d4d011ff0…`) et le nom de fichier sont également définis en haut de `script.js` si besoin de les changer pour une future version.
 

@@ -4,7 +4,14 @@
    still works. Respects reduced motion and touch devices.
    ============================================================ */
 
-/* ── Layer order ───────────────────────────────────────────── */
+/* ── Layer order + admin-controlled themes / toggles ──────── */
+:root[data-accent="indigo"] { --teal: #7c8cff; --indigo: #57e6c5; }
+:root[data-accent="amber"]  { --teal: #ffc46b; --indigo: #7c8cff; }
+:root[data-accent="violet"] { --teal: #b47bff; --indigo: #7c8cff; }
+.no-particles .particle-field,
+.no-ticker .ticker,
+.no-back-top .back-top { display: none !important; }
+
 .hero > .container { position: relative; z-index: 2; }
 .particle-field {
   position: absolute;
@@ -14,24 +21,6 @@
   z-index: 1;
   pointer-events: none;
   opacity: .72;
-}
-
-/* ── Global cursor aura ───────────────────────────────────── */
-.cursor-glow {
-  position: fixed;
-  left: 0; top: 0;
-  z-index: 90;
-  width: 380px; height: 380px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(87, 230, 197, .10), rgba(124, 140, 255, .05) 42%, transparent 68%);
-  mix-blend-mode: screen;
-  pointer-events: none;
-  transform: translate3d(-1000px, -1000px, 0);
-  transition: opacity .4s ease;
-  will-change: transform;
-}
-@media (pointer: coarse), (prefers-reduced-motion: reduce) {
-  .cursor-glow { display: none; }
 }
 
 /* ── Ticker band ──────────────────────────────────────────── */
@@ -95,9 +84,21 @@
   .back-top { right: 14px; bottom: 14px; width: 42px; height: 42px; }
 }
 
-/* ── Magnetic buttons ─────────────────────────────────────── */
+/* ── Magnetic buttons with a light sweep ──────────────────── */
 .btn[data-magnetic] { will-change: transform; }
 .btn[data-magnetic]:hover { box-shadow: 0 16px 36px rgba(0, 0, 0, .3); }
+.btn--primary { position: relative; overflow: hidden; isolation: isolate; }
+.btn--primary::after {
+  content: "";
+  position: absolute;
+  inset: -60%;
+  background: linear-gradient(115deg, transparent 38%, rgba(255,255,255,.42) 50%, transparent 62%);
+  transform: translateX(-130%);
+  transition: transform .75s var(--ease);
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+.btn--primary:hover::after { transform: translateX(130%); }
 
 /* ── Richer hero typography ───────────────────────────────── */
 .hero h1 {
@@ -109,7 +110,10 @@
   position: relative;
   background-clip: text;
   -webkit-background-clip: text;
+  background-size: 200% auto;
+  animation: gradient-shift 8s ease-in-out infinite alternate;
 }
+@keyframes gradient-shift { to { background-position: 200% center; } }
 .gradient-text::after {
   content: "";
   position: absolute;
@@ -152,6 +156,40 @@
   box-shadow: 0 28px 60px rgba(0, 0, 0, .42), 0 0 0 1px rgba(87, 230, 197, .22), inset 0 0 40px rgba(87, 230, 197, .06);
 }
 
+/* ── Extra depth: terminal border, chips, section rules ───── */
+.terminal-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: 5;
+  border-radius: 23px;
+  padding: 1px;
+  background: conic-gradient(from 0deg, transparent 0 62%, var(--teal), var(--indigo), transparent);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: .7;
+  pointer-events: none;
+  animation: spin 18s linear infinite;
+}
+.hero-chips li {
+  transition: transform .3s var(--ease), color .3s ease;
+  cursor: default;
+}
+.hero-chips li:hover { transform: translateY(-3px); color: #fff; }
+.section-head::after {
+  content: "";
+  display: block;
+  width: 72px; height: 2px;
+  margin-top: 20px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--teal), transparent);
+  transform-origin: left;
+  animation: rule-in 1s var(--ease) both;
+}
+@keyframes rule-in { from { transform: scaleX(0); opacity: 0; } }
+.lightbox { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+
 /* ── Verify: code title pulse ─────────────────────────────── */
 .code-title { animation: title-breathe 4s ease-in-out infinite; }
 @keyframes title-breathe {
@@ -171,6 +209,8 @@
 
 /* ── Reduced motion: freeze the new decorative bits ──────── */
 @media (prefers-reduced-motion: reduce) {
-  .gradient-text::after, .code-title { animation: none !important; }
-  .back-top, .cursor-glow { transition: none; }
+  .gradient-text, .gradient-text::after, .code-title,
+  .terminal-card::before, .section-head::after, .btn--primary::after { animation: none !important; }
+  .btn--primary::after, .section-head::after { transition: none; }
+  .back-top { transition: none; }
 }
