@@ -50,6 +50,10 @@ function loadAdminConfig() {
   VERIFY_COMMAND = buildVerifyCommand();
 }
 
+function isLocalNameOnHostedSite() {
+  return !!DOWNLOAD_URL && !/^[a-z][a-z0-9+.-]*:/i.test(DOWNLOAD_URL) && location.protocol === "https:";
+}
+
 /* ── Desktop-only gate: block phones and tablets ───────────── */
 function setupDeviceGate() {
   const gate = document.getElementById("deviceGate");
@@ -105,10 +109,17 @@ function setupDownloadModal() {
   const agree = document.getElementById("agreeDownload");
   if (agree) {
     agree.addEventListener("click", () => {
+      const fine = document.getElementById("downloadFine");
       if (!DOWNLOAD_URL) {
-        const fine = document.getElementById("downloadFine");
         if (fine) {
           fine.textContent = "No ISO link is configured for this browser. Ask the admin to set it in admin.html.";
+          fine.classList.add("is-warning");
+        }
+        return;
+      }
+      if (isLocalNameOnHostedSite()) {
+        if (fine) {
+          fine.textContent = "That's a local filename — open the site files on your PC for it to work, or save a direct URL in admin.html.";
           fine.classList.add("is-warning");
         }
         return;
@@ -134,8 +145,13 @@ function openDownloadModal(trigger) {
   if (!modal) return;
   const fine = document.getElementById("downloadFine");
   if (fine) {
-    fine.textContent = "The ISO will be saved to your Downloads folder.";
-    fine.classList.remove("is-warning");
+    if (isLocalNameOnHostedSite()) {
+      fine.textContent = "Local filename detected — it only works when the site is opened from your own PC.";
+      fine.classList.add("is-warning");
+    } else {
+      fine.textContent = "The ISO will be saved to your Downloads folder.";
+      fine.classList.remove("is-warning");
+    }
   }
   modal.dataset.trigger = trigger && trigger.id ? trigger.id : "";
   modal.hidden = false;

@@ -79,6 +79,8 @@
     .msg.error { color: var(--red); }
     .code-box { margin-top: 30px; padding-top: 26px; border-top: 1px solid var(--border); }
     .code-box h2 { margin: 0 0 18px; font-size: 1.1rem; letter-spacing: -.03em; color: var(--amber); }
+    .hint { margin: -6px 0 18px; font-size: .72rem; line-height: 1.5; color: var(--muted); }
+    .hint code { font-family: var(--mono); color: var(--teal); }
     .fine { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border); font-size: .72rem; color: var(--muted); line-height: 1.6; }
     [hidden] { display: none !important; }
   </style>
@@ -101,7 +103,8 @@
       <h1>Download settings.</h1>
       <p class="lead">These values are saved only in <strong>this browser</strong>. Nobody else visiting the site will see them.</p>
       <form id="configForm">
-        <label><span>Direct ISO URL</span><input id="urlInput" type="url" placeholder="https://example.com/Obryx-OS-0.4-Alpha4-x86_64.iso"></label>
+        <label><span>Direct ISO URL or local filename</span><input id="urlInput" type="text" placeholder="https://example.com/…  or  Obryx-OS-0.4-Alpha4-x86_64.iso"></label>
+        <p class="hint">A local filename works only if the .iso sits next to <code>index.html</code> on your own PC. No hosting needed — but it won't work from GitHub Pages.</p>
         <label><span>Saved filename</span><input id="nameInput" type="text" placeholder="Obryx-OS-0.4-Alpha4-x86_64.iso"></label>
         <label><span>SHA-256</span><input id="hashInput" type="text" placeholder="46d071d4d011ff0…"></label>
         <div class="row">
@@ -179,8 +182,9 @@
     configForm.addEventListener("submit", (event) => {
       event.preventDefault();
       const url = urlInput.value.trim();
-      if (url && !/^https?:\/\//i.test(url)) {
-        message(adminMsg, "The URL must start with http:// or https://", true);
+      const hasScheme = /^[a-z][a-z0-9+.-]*:/i.test(url);
+      if (hasScheme && !/^(https?:|file:)/i.test(url)) {
+        message(adminMsg, "Use http(s), file, or just a local filename — nothing else.", true);
         return;
       }
       write({
