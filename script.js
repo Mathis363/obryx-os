@@ -55,6 +55,16 @@ function isLocalNameOnHostedSite() {
   return !!DOWNLOAD_URL && !/^[a-z][a-z0-9+.-]*:/i.test(DOWNLOAD_URL) && location.protocol === "https:";
 }
 
+function isExternalLink() {
+  if (!DOWNLOAD_URL || !/^[a-z][a-z0-9+.-]*:/i.test(DOWNLOAD_URL)) return false;
+  if (/^file:/i.test(DOWNLOAD_URL)) return false;
+  try {
+    return new URL(DOWNLOAD_URL, location.href).origin !== location.origin;
+  } catch (_) {
+    return false;
+  }
+}
+
 /* ── Desktop-only gate: block phones and tablets ───────────── */
 function setupDeviceGate() {
   const gate = document.getElementById("deviceGate");
@@ -134,8 +144,14 @@ function setupDownloadModal() {
 function downloadIso() {
   const link = document.createElement("a");
   link.href = DOWNLOAD_URL;
-  link.download = ISO_FILENAME;
-  link.rel = "noopener";
+  link.rel = "noopener noreferrer";
+  if (isExternalLink()) {
+    // Cross-origin hosts (GoFile, Drive, NAS…) can't be forced into the
+    // Downloads folder — open their page so the visitor clicks Download.
+    link.target = "_blank";
+  } else {
+    link.download = ISO_FILENAME;
+  }
   document.body.appendChild(link);
   link.click();
   link.remove();
@@ -149,6 +165,9 @@ function openDownloadModal(trigger) {
     if (isLocalNameOnHostedSite()) {
       fine.textContent = "Local filename detected — it only works when the site is opened from your own PC.";
       fine.classList.add("is-warning");
+    } else if (isExternalLink()) {
+      fine.textContent = "Opens the file host in a new tab — click Download there.";
+      fine.classList.remove("is-warning");
     } else {
       fine.textContent = "The ISO will be saved to your Downloads folder.";
       fine.classList.remove("is-warning");
