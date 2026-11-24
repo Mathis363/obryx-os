@@ -77,6 +77,8 @@
     button.danger { color: var(--red); }
     .msg { min-height: 20px; margin-top: 16px; font-family: var(--mono); font-size: .74rem; color: var(--teal); }
     .msg.error { color: var(--red); }
+    .code-box { margin-top: 30px; padding-top: 26px; border-top: 1px solid var(--border); }
+    .code-box h2 { margin: 0 0 18px; font-size: 1.1rem; letter-spacing: -.03em; color: var(--amber); }
     .fine { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border); font-size: .72rem; color: var(--muted); line-height: 1.6; }
     [hidden] { display: none !important; }
   </style>
@@ -103,28 +105,43 @@
         <label><span>Saved filename</span><input id="nameInput" type="text" placeholder="Obryx-OS-0.4-Alpha4-x86_64.iso"></label>
         <label><span>SHA-256</span><input id="hashInput" type="text" placeholder="46d071d4d011ff0…"></label>
         <div class="row">
-          <button class="primary" type="submit">Save</button>
+          <button class="primary" type="submit">Save download settings</button>
           <button type="button" id="testBtn">Test download</button>
-          <button type="button" class="danger" id="clearBtn">Clear</button>
+          <button type="button" class="danger" id="clearBtn">Clear link</button>
           <a class="btn" href="index.html">Back to site</a>
         </div>
         <div class="msg" id="adminMsg"></div>
       </form>
-      <p class="fine">The ISO itself must be hosted somewhere that allows large files — GitHub Pages and Releases cannot store 3.7 GB. This console only changes the link your browser uses; it is client-side, not real server security. Change <code>ADMIN_CODE</code> in this file to your own code.</p>
+
+      <form id="codeForm" class="code-box">
+        <h2>Change access code</h2>
+        <label><span>Current code</span><input id="currentCode" type="password" autocomplete="current-password" required></label>
+        <label><span>New code</span><input id="newCode" type="password" autocomplete="new-password" required></label>
+        <label><span>Confirm new code</span><input id="confirmCode" type="password" autocomplete="new-password" required></label>
+        <div class="row">
+          <button type="submit">Change code</button>
+          <button type="button" class="danger" id="resetCodeBtn">Reset to default</button>
+        </div>
+        <div class="msg" id="codeMsg"></div>
+      </form>
+
+      <p class="fine">The ISO itself must be hosted somewhere that allows large files — GitHub Pages and Releases cannot store 3.7 GB. Everything here is saved only in this browser, so each device has its own link and code. This is client-side convenience, not real server security.</p>
     </section>
   </main>
 
   <script>
-    // 👉 CHANGE THIS to your own private code.
-    const ADMIN_CODE = "obryx-admin";
+    // Default code — you can change it below once you're unlocked.
+    const DEFAULT_ADMIN_CODE = "obryx-admin";
     const KEY = "obryxAdminConfig";
 
     const lockView = document.getElementById("lockView");
     const adminView = document.getElementById("adminView");
     const lockForm = document.getElementById("lockForm");
     const configForm = document.getElementById("configForm");
+    const codeForm = document.getElementById("codeForm");
     const lockMsg = document.getElementById("lockMsg");
     const adminMsg = document.getElementById("adminMsg");
+    const codeMsg = document.getElementById("codeMsg");
     const urlInput = document.getElementById("urlInput");
     const nameInput = document.getElementById("nameInput");
     const hashInput = document.getElementById("hashInput");
@@ -134,6 +151,7 @@
       catch (_) { return {}; }
     }
     function write(config) { localStorage.setItem(KEY, JSON.stringify(config)); }
+    function currentCode() { return read().adminCode || DEFAULT_ADMIN_CODE; }
     function message(el, text, isError) {
       el.textContent = text;
       el.classList.toggle("error", !!isError);
@@ -149,7 +167,7 @@
 
     lockForm.addEventListener("submit", (event) => {
       event.preventDefault();
-      if (document.getElementById("codeInput").value === ADMIN_CODE) {
+      if (document.getElementById("codeInput").value === currentCode()) {
         lockView.hidden = true;
         adminView.hidden = false;
         fill();
@@ -166,6 +184,7 @@
         return;
       }
       write({
+        ...read(),
         downloadUrl: url,
         isoFilename: nameInput.value.trim() || "Obryx-OS-0.4-Alpha4-x86_64.iso",
         hash: hashInput.value.trim()
@@ -187,9 +206,44 @@
     });
 
     document.getElementById("clearBtn").addEventListener("click", () => {
-      localStorage.removeItem(KEY);
+      const c = read();
+      delete c.downloadUrl;
+      delete c.isoFilename;
+      delete c.hash;
+      write(c);
       fill();
-      message(adminMsg, "Cleared. The main site will not download anything until you save a link again.", true);
+      message(adminMsg, "Link cleared. Your access code is unchanged.", true);
+    });
+
+    codeForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const current = document.getElementById("currentCode").value;
+      const next = document.getElementById("newCode").value.trim();
+      const confirm = document.getElementById("confirmCode").value;
+
+      if (current !== currentCode()) {
+        message(codeMsg, "Current code is wrong.", true);
+        return;
+      }
+      if (!next) {
+        message(codeMsg, "Enter a new code.", true);
+        return;
+      }
+      if (next !== confirm) {
+        message(codeMsg, "The new codes don't match.", true);
+        return;
+      }
+      write({ ...read(), adminCode: next });
+      codeForm.reset();
+      message(codeMsg, `Code changed. Use "${next}" next time.`);
+    });
+
+    document.getElementById("resetCodeBtn").addEventListener("click", () => {
+      const c = read();
+      delete c.adminCode;
+      write(c);
+      codeForm.reset();
+      message(codeMsg, `Reset to default code: ${DEFAULT_ADMIN_CODE}`);
     });
   </script>
 </body>
