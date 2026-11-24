@@ -72,3 +72,26 @@ cd obryx-site
 python -m http.server 8000
 # http://localhost:8000
 ```
+
+## 5. Console admin Windows (.exe)
+
+`ObryxAdmin.exe` (à la racine du dépôt) ouvre **la vraie console admin** du site dans une fenêtre Windows dédiée :
+
+- code d'accès **`obryx-admin` intégré** → déverrouillage automatique ;
+- tous les onglets du site : Download, Appearance, Visitors, Security, Transfer, Diagnostics ;
+- barre d'outils intégrée : *Open site*, *Copy config* ;
+- stockage WebView persistant dans `%LOCALAPPDATA%\ObryxAdminTool`.
+
+Téléchargement direct : https://mathis363.github.io/obryx-os/ObryxAdmin.exe
+
+⚠️ Le `localStorage` de cette fenêtre est **séparé** de celui de ton navigateur habituel. Pour appliquer les réglages sur le site ouvert dans Chrome/Edge : **Export settings** dans l'exe, puis **Import settings** dans l'admin du site. Le code d'accès n'est jamais exporté.
+
+Pour utiliser un autre code sans recompiler, place un fichier `obryx-code.txt` contenant ce code à côté de l'exe.
+
+Pour reconstruire l'exe (Python + PyInstaller installés) :
+
+```bash
+cd tools
+pyinstaller --noconfirm --onefile --noconsole --name ObryxAdmin --distpath dist --workpath build --specpath . obryx_admin_tool.py
+copy dist\ObryxAdmin.exe ..\ObryxAdmin.exe
+```
