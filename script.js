@@ -1,39 +1,84 @@
 /* ============================================================
    Obryx OS — interactions
    ------------------------------------------------------------
-   ⚠️  ONLY THING YOU NEED TO EDIT TO MAKE "DOWNLOAD" WORK:
-   Replace DOWNLOAD_URL below with the DIRECT link to the ISO.
-   A 3.7 GB file cannot live in a GitHub repo or on GitHub Pages,
-   so host it on a file host and paste its direct URL here.
-   Until then the buttons point to the Releases page.
+   CONFIG — two things you may want to change:
+   1) DOWNLOAD_URL: direct link to the ISO once it is hosted.
+      For now the "I agree" button opens the GitHub repository.
+      (A 3.7 GB ISO cannot live in a GitHub repo or on Pages,
+       and release assets are capped at 2 GiB.)
+   2) EXPECTED_HASH / ISO_FILENAME: update for future releases.
    ============================================================ */
 
-const DOWNLOAD_URL = "https://github.com/Mathis363/obryx-os/releases";
+const DOWNLOAD_URL = "https://github.com/Mathis363/obryx-os";
 
 const ISO_FILENAME = "Obryx-OS-0.4-Alpha4-x86_64.iso";
 const EXPECTED_HASH = "46d071d4d011ff0061a7baf3316e9689484490169a2b9ca1ca892a2e712cbefb";
 const VERIFY_COMMAND = `(Get-FileHash .\\${ISO_FILENAME}).Hash`;
 
+let lightboxItems = [];
+let lightboxIndex = 0;
+
 document.addEventListener("DOMContentLoaded", () => {
   setupDownloadButtons();
+  setupDownloadModal();
   setupNavigation();
   setupScrollEffects();
   setupRevealAnimations();
   setupActiveLinks();
   setupCopyButtons();
   setupHeroPointer();
+  setupTilt();
   setupScreenshots();
   setupLightbox();
 });
 
-/* ── Download buttons (one URL for the whole page) ─────────── */
+/* ── Download buttons: warning first, then redirect ────────── */
 function setupDownloadButtons() {
   document.querySelectorAll("[data-download]").forEach((link) => {
     link.href = DOWNLOAD_URL || "#";
-    if (DOWNLOAD_URL && !DOWNLOAD_URL.startsWith("#")) {
-      link.setAttribute("aria-label", `${link.textContent.trim()} (3.7 GB)`);
-    }
+    link.setAttribute("aria-label", `${link.textContent.trim()} — opens a beta warning first`);
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+      openDownloadModal(link);
+    });
   });
+}
+
+/* ── Beta confirmation modal ───────────────────────────────── */
+function setupDownloadModal() {
+  const modal = document.getElementById("downloadModal");
+  if (!modal) return;
+
+  const closeModal = () => {
+    modal.hidden = true;
+    document.body.style.overflow = "";
+    const trigger = modal.dataset.trigger;
+    if (trigger) document.getElementById(trigger)?.focus();
+  };
+
+  modal.querySelectorAll("[data-close-modal]").forEach((el) => {
+    el.addEventListener("click", closeModal);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !modal.hidden) closeModal();
+  });
+
+  const agree = document.getElementById("agreeDownload");
+  if (agree) {
+    agree.addEventListener("click", () => {
+      window.location.href = DOWNLOAD_URL;
+    });
+  }
+}
+
+function openDownloadModal(trigger) {
+  const modal = document.getElementById("downloadModal");
+  if (!modal) return;
+  modal.dataset.trigger = trigger && trigger.id ? trigger.id : "";
+  modal.hidden = false;
+  document.body.style.overflow = "hidden";
+  document.querySelector(".modal-close")?.focus();
 }
 
 /* ── Mobile menu ───────────────────────────────────────────── */
@@ -101,7 +146,6 @@ function setupRevealAnimations() {
     return;
   }
 
-  // Show whatever is already on screen right away (no blank first paint).
   items.forEach((item) => {
     if (item.getBoundingClientRect().top < window.innerHeight * 0.9) {
       item.classList.add("is-visible");
@@ -119,7 +163,6 @@ function setupRevealAnimations() {
 
   items.forEach((item) => observer.observe(item));
 
-  // Safety net for browsers/tabs that delay observer callbacks.
   window.setTimeout(() => {
     items.forEach((item) => {
       if (item.getBoundingClientRect().top < window.innerHeight) {
@@ -213,56 +256,96 @@ function setupHeroPointer() {
   });
 }
 
-/* ── Screenshots: drop files in assets/screenshots/ and they
-      appear automatically — no HTML edit needed for existing
-      slots. Names: obryx-shot-01.png, obryx-shot-02.png, obryx-shot-03.png ── */
-function setupScreenshots() {
-  document.querySelectorAll(".shot-img[data-shot]").forEach((img) => {
-    const src = img.dataset.shot;
-    const probe = new Image();
+/* ── Subtle 3D tilt on cards ───────────────────────────────── */
+function setupTilt() {
+  if (!window.matchMedia("(pointer: fine)").matches) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    probe.onload = () => {
-      img.src = src;
-      img.hidden = false;
-      const placeholder = img.parentElement.querySelector(".shot-placeholder");
-      if (placeholder) placeholder.hidden = true;
-      img.addEventListener("click", () => openLightbox(src, img.alt));
-    };
-    probe.onerror = () => { /* keep the illustrated placeholder */ };
-    probe.src = src;
+  document.querySelectorAll("[data-tilt]").forEach((card) => {
+    const max = Number(card.dataset.tiltMax || 7);
+    card.addEventListener("pointermove", (event) => {
+      const rect = card.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / rect.width - .5;
+      const y = (event.clientY - rect.top) / rect.height - .5;
+      card.style.setProperty("--ry", `${(x * max * 2).toFixed(2)}deg`);
+      card.style.setProperty("--rx", `${(-y * max * 2).toFixed(2)}deg`);
+    });
+    card.addEventListener("pointerleave", () => {
+      card.style.setProperty("--ry", "0deg");
+      card.style.setProperty("--rx", "0deg");
+    });
   });
 }
 
-/* ── Screenshot lightbox ───────────────────────────────────── */
+/* ── Screenshots ───────────────────────────────────────────── */
+function setupScreenshots() {
+  const images = [...document.querySelectorAll(".shot-img[data-shot]")];
+  lightboxItems = images.map((img, index) => ({
+    src: img.dataset.shot || img.getAttribute("src"),
+    alt: img.alt || `Obryx OS screenshot ${index + 1}`
+  }));
+
+  images.forEach((img, index) => {
+    img.addEventListener("click", () => openLightbox(index));
+
+    // Keep illustrated fallback if an image is ever missing.
+    const probe = new Image();
+    probe.onerror = () => {
+      img.hidden = true;
+      const placeholder = img.parentElement.querySelector(".shot-placeholder");
+      if (placeholder) placeholder.hidden = false;
+    };
+    probe.src = img.dataset.shot;
+  });
+}
+
+/* ── Screenshot lightbox with navigation ──────────────────── */
 function setupLightbox() {
   const box = document.getElementById("lightbox");
   if (!box) return;
-  const closeButton = document.getElementById("lightboxClose");
-  const image = document.getElementById("lightboxImg");
-  const caption = document.getElementById("lightboxCaption");
 
-  closeButton.addEventListener("click", closeLightbox);
+  document.getElementById("lightboxClose")?.addEventListener("click", closeLightbox);
+  document.getElementById("lightboxPrev")?.addEventListener("click", () => stepLightbox(-1));
+  document.getElementById("lightboxNext")?.addEventListener("click", () => stepLightbox(1));
+
   box.addEventListener("click", (event) => {
-    if (event.target === box) closeLightbox();
+    if (event.target === box || event.target.classList.contains("modal-backdrop")) closeLightbox();
   });
+
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && !box.hidden) closeLightbox();
+    if (box.hidden) return;
+    if (event.key === "Escape") closeLightbox();
+    if (event.key === "ArrowLeft") stepLightbox(-1);
+    if (event.key === "ArrowRight") stepLightbox(1);
   });
 }
 
-function openLightbox(src, alt) {
+function openLightbox(index) {
   const box = document.getElementById("lightbox");
-  if (!box) return;
-  box.dataset.returnFocus = document.activeElement ? "1" : "0";
+  if (!box || !lightboxItems.length) return;
   box.dataset.returnFocusId = document.activeElement && document.activeElement.id ? document.activeElement.id : "";
-  const image = document.getElementById("lightboxImg");
-  const caption = document.getElementById("lightboxCaption");
-  image.src = src;
-  image.alt = alt;
-  caption.textContent = alt;
+  lightboxIndex = index;
+  showLightboxImage();
   box.hidden = false;
   document.body.style.overflow = "hidden";
-  document.getElementById("lightboxClose").focus();
+  document.getElementById("lightboxClose")?.focus();
+}
+
+function stepLightbox(direction) {
+  if (!lightboxItems.length) return;
+  lightboxIndex = (lightboxIndex + direction + lightboxItems.length) % lightboxItems.length;
+  showLightboxImage();
+}
+
+function showLightboxImage() {
+  const item = lightboxItems[lightboxIndex];
+  if (!item) return;
+  const image = document.getElementById("lightboxImg");
+  image.src = item.src;
+  image.alt = item.alt;
+  document.getElementById("lightboxCaption").textContent = item.alt;
+  document.getElementById("lightboxCount").textContent =
+    `${String(lightboxIndex + 1).padStart(2, "0")} / ${String(lightboxItems.length).padStart(2, "0")}`;
 }
 
 function closeLightbox() {
@@ -270,9 +353,7 @@ function closeLightbox() {
   if (!box || box.hidden) return;
   box.hidden = true;
   document.body.style.overflow = "";
-  const image = document.getElementById("lightboxImg");
-  image.removeAttribute("src");
-  if (box.dataset.returnFocusId) {
-    document.getElementById(box.dataset.returnFocusId)?.focus();
-  }
+  document.getElementById("lightboxImg")?.removeAttribute("src");
+  const id = box.dataset.returnFocusId;
+  if (id) document.getElementById(id)?.focus();
 }

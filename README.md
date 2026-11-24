@@ -23,19 +23,20 @@ Il faut donc uploader l'ISO chez un hébergeur qui accepte les gros fichiers ave
 const DOWNLOAD_URL = "https://exemple.com/Obryx-OS-0.4-Alpha4-x86_64.iso";
 ```
 
-Tous les boutons « Download » du site pointent vers cette URL. Tant que tu ne l'as pas remplacée, ils renvoient vers la page Releases du dépôt — pense à y publier une release si tu veux une solution temporaire.
+Tous les boutons « Download » affichent d'abord une fenêtre d'avertissement beta. Après « I agree », l'utilisateur est envoyé vers `DOWNLOAD_URL`. Tant que tu ne l'as pas remplacée, elle pointe vers le dépôt https://github.com/Mathis363/obryx-os .
 
 Le hash affiché (`46d071d4d011ff0…`) et le nom de fichier sont également définis en haut de `script.js` si besoin de les changer pour une future version.
 
 ## 2. Ajouter les captures d'écran
 
-Voir [`assets/screenshots/README.md`](assets/screenshots/README.md). En résumé : dépose `obryx-shot-01.png`, `obryx-shot-02.png` et `obryx-shot-03.png` dans ce dossier, puis recharge la page. Les images apparaissent automatiquement.
+Voir [`assets/screenshots/README.md`](assets/screenshots/README.md). En résumé : les 7 captures `obryx-shot-01.png` → `obryx-shot-07.png` sont déjà intégrées ; un clic ouvre le lightbox, avec flèches ← → pour naviguer.
 
 ## 3. Modifier le contenu
 
 - `index.html` — textes et structure (tout est en anglais).
 - `styles.css` — couleurs, animations, mise en page responsive.
-- `script.js` — URL de téléchargement, copie du hash, menu, lightbox, animations.
+- `enhance.css` — couche « showcase » (interface OS animée, bento, HUD, modal, effets 3D).
+- `script.js` — URL de téléchargement, fenêtre beta, copie du hash, menu, lightbox, animations.
 
 Couleurs principales à changer dans `:root` en haut de `styles.css` : `--teal`, `--indigo`, `--violet`, `--lime`.
 

@@ -11,7 +11,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=2">
-  <script src="script.js?v=2" defer></script>
+  <link rel="stylesheet" href="enhance.css?v=3">
+  <script src="script.js?v=3" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -79,24 +80,64 @@
           </ul>
         </div>
 
-        <div class="hero-visual reveal" style="--delay:.16s" id="heroVisual">
+        <div class="hero-visual reveal" style="--delay:.16s" id="heroVisual" data-tilt data-tilt-max="6">
           <div class="orbit orbit--outer"></div>
           <div class="orbit orbit--inner"></div>
+          <span class="hud hud--tl">SYS // OBRYX-04</span>
+          <span class="hud hud--tr">● LIVE</span>
+          <span class="hud hud--bl">x86_64 · UEFI</span>
+
           <div class="terminal-card">
             <div class="terminal-bar">
               <span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-              <span class="terminal-title">obryx@live — ~</span>
+              <span class="terminal-title">obryx@live — desktop</span>
               <span class="terminal-live"><i></i> LIVE</span>
             </div>
-            <div class="terminal-body" aria-hidden="true">
-              <p class="term-line term-line--1"><span class="term-prompt">$</span> obryx info</p>
-              <p class="term-line term-line--2"><span class="term-key">OS</span> <span class="term-val">Obryx 0.4 "Alpha4"</span></p>
-              <p class="term-line term-line--3"><span class="term-key">Mode</span> <span class="term-val">LIVE / USB</span></p>
-              <p class="term-line term-line--4"><span class="term-key">Disk</span> <span class="term-val">untouched</span></p>
-              <p class="term-line term-line--5"><span class="term-key">Windows</span> <span class="term-ok">still here ✓</span></p>
-              <p class="term-line term-line--6"><span class="term-prompt">$</span> <span class="term-cursor"></span></p>
+
+            <div class="desktop-ui" aria-hidden="true">
+              <div class="dp-rail">
+                <span class="dp-mark">◈</span>
+                <span class="dp-ico is-active">▦</span>
+                <span class="dp-ico">◱</span>
+                <span class="dp-ico">⚙</span>
+                <span class="dp-ico">⌘</span>
+                <span class="dp-ico dp-ico--last">⏻</span>
+              </div>
+              <div class="dp-screen">
+                <div class="dp-topbar"><span>Activities</span><span class="dp-clock">12:04 <i>Thu 24</i></span></div>
+                <div class="dp-wall">
+                  <div class="dp-orb"><span>O</span></div>
+                  <div class="dp-welcome">
+                    <small>WELCOME TO</small>
+                    <strong>Obryx OS</strong>
+                    <em>0.4 Alpha4 · live session</em>
+                  </div>
+                  <div class="dp-widgets">
+                    <div class="dp-widget"><span>SESSION</span><b>LIVE</b></div>
+                    <div class="dp-widget"><span>DISK</span><b>SAFE</b></div>
+                    <div class="dp-widget"><span>WINDOWS</span><b>INTACT</b></div>
+                  </div>
+                </div>
+                <div class="dp-console">
+                  <p><span>$</span> obryx info</p>
+                  <p><i>Mode</i> LIVE / USB <b>✓</b></p>
+                  <p><i>Files</i> untouched <b>✓</b></p>
+                </div>
+              </div>
             </div>
+
+            <div class="terminal-bottom"><span class="tb-dot"></span> Live mode active <span class="tb-sep">/</span> no changes to disk</div>
           </div>
+
+          <div class="dock" aria-hidden="true">
+            <span class="dock-icon dock-icon--teal">◈</span>
+            <span class="dock-icon">▤</span>
+            <span class="dock-icon">⌘</span>
+            <span class="dock-icon">◉</span>
+            <span class="dock-divider"></span>
+            <span class="dock-icon">⏻</span>
+          </div>
+
           <div class="float-badge float-badge--top">
             <span class="badge-pulse"></span>
             <span><strong>Live session</strong><small>Nothing installed</small></span>
@@ -148,32 +189,32 @@
     <!-- ───────────────────────── STEPS ───────────────────────── -->
     <section class="section steps-section" id="try">
       <div class="container">
-        <div class="section-head reveal">
+        <div class="section-head reveal" data-index="01">
           <span class="kicker">Get started</span>
           <h2>Try it from a USB stick<span class="accent-dot">.</span></h2>
           <p>Obryx runs live from USB, so you can try it without changing anything on your computer.</p>
         </div>
 
         <ol class="steps-grid">
-          <li class="step reveal">
+          <li class="step reveal" data-tilt>
             <div class="step-top"><span class="step-number">01</span><span class="step-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0 4.5-4.5M12 15l-4.5-4.5M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
             <h3>Download the ISO</h3>
             <p>Use the download button above. It's one file, with nothing to unzip or combine.</p>
             <span class="step-foot">~3.7 GB · one file</span>
           </li>
-          <li class="step reveal" style="--delay:.08s">
+          <li class="step reveal" data-tilt style="--delay:.08s">
             <div class="step-top"><span class="step-number">02</span><span class="step-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4 8h13l3 3v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M4 8V6a2 2 0 0 1 2-2h8l3 4" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="8" cy="14" r="1.4" fill="currentColor"/></svg></span></div>
             <h3>Write it to a USB stick</h3>
             <p>On Windows, open Rufus, select the Obryx ISO and your USB stick, then press Start. On Mac or Linux, balenaEtcher works too. This erases the USB stick.</p>
             <span class="step-foot">8 GB or larger</span>
           </li>
-          <li class="step reveal" style="--delay:.16s">
+          <li class="step reveal" data-tilt style="--delay:.16s">
             <div class="step-top"><span class="step-number">03</span><span class="step-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 21h8m-4-4v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="m9.8 8.4 3.2 2.1-3.2 2.1V8.4Z" fill="currentColor"/></svg></span></div>
             <h3>Boot from the USB</h3>
             <p>Restart your PC and open its boot menu (often F12, F11, F8 or Esc while it starts), then pick the USB stick.</p>
-            <span class="step-foot">F12 · F11 · F8 · Esc</span>
+            <span class="step-foot"><kbd>F12</kbd><kbd>F11</kbd><kbd>F8</kbd><kbd>Esc</kbd></span>
           </li>
-          <li class="step reveal" style="--delay:.24s">
+          <li class="step reveal" data-tilt style="--delay:.24s">
             <div class="step-top"><span class="step-number">04</span><span class="step-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="m5 13 4.5 4.5L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
             <h3>Choose Try</h3>
             <p>Pick the live option to try Obryx. Nothing is installed to your drive until you choose to.</p>
@@ -188,34 +229,34 @@
     <!-- ───────────────────────── REQUIREMENTS ───────────────────────── -->
     <section class="section requirements-section" id="requirements">
       <div class="container">
-        <div class="section-head reveal">
+        <div class="section-head reveal" data-index="02">
           <span class="kicker">Specs</span>
           <h2>What you'll need<span class="accent-dot">.</span></h2>
           <p>Nothing exotic. If your laptop is reasonably recent, you're probably good to go.</p>
         </div>
 
         <div class="req-grid">
-          <article class="req-card reveal">
+          <article class="req-card reveal" data-tilt data-stat="64">
             <span class="req-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="13" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M8 21h8m-4-4v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
             <span class="req-label">Computer</span>
             <p>64-bit (x86_64) PC with UEFI</p>
           </article>
-          <article class="req-card reveal" style="--delay:.06s">
+          <article class="req-card reveal" data-tilt data-stat="4/8" style="--delay:.06s">
             <span class="req-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="7" width="18" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M7 7V4m5 3V4m5 3V4M7 20v-3m5 3v-3m5 3v-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
             <span class="req-label">Memory</span>
             <p>4 GB RAM, 8 GB recommended</p>
           </article>
-          <article class="req-card reveal" style="--delay:.12s">
+          <article class="req-card reveal" data-tilt data-stat="8" style="--delay:.12s">
             <span class="req-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M4 9h11l3 3v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 3v3m4-3v3m4-3v3M9 14h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
             <span class="req-label">USB stick</span>
             <p>8 GB or larger</p>
           </article>
-          <article class="req-card reveal" style="--delay:.18s">
+          <article class="req-card reveal" data-tilt data-stat="3.7" style="--delay:.18s">
             <span class="req-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0 4.5-4.5M12 15l-4.5-4.5M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             <span class="req-label">Download</span>
             <p>3.7 GB</p>
           </article>
-          <article class="req-card req-card--warn reveal" style="--delay:.24s">
+          <article class="req-card req-card--warn reveal" data-tilt data-stat="X" style="--delay:.24s">
             <span class="req-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="m5.6 5.6 12.8 12.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
             <span class="req-label">Not supported</span>
             <p>ARM devices, Macs with Apple chips</p>
@@ -227,7 +268,7 @@
     <!-- ───────────────────────── VERIFY ───────────────────────── -->
     <section class="section verify-section" id="verify">
       <div class="container verify-grid">
-        <div class="verify-copy reveal">
+        <div class="verify-copy reveal" data-index="03">
           <span class="kicker">Optional, but smart</span>
           <h2>Verify your download<span class="accent-dot">.</span></h2>
           <p>Optional. Check that the ISO isn't damaged by comparing its SHA-256 hash. In PowerShell:</p>
@@ -238,7 +279,7 @@
           </ul>
         </div>
 
-        <div class="code-card reveal" style="--delay:.12s">
+        <div class="code-card reveal" data-tilt style="--delay:.12s">
           <div class="code-top">
             <span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
             <span class="code-title">PowerShell</span>
@@ -265,7 +306,7 @@
     <!-- ───────────────────────── SCREENSHOTS ───────────────────────── -->
     <section class="section gallery-section" id="screenshots">
       <div class="container">
-        <div class="section-head section-head--split reveal">
+        <div class="section-head section-head--split reveal" data-index="04">
           <div>
             <span class="kicker">A closer look</span>
             <h2>What it looks like<span class="accent-dot">.</span></h2>
@@ -372,11 +413,46 @@
     </div>
   </footer>
 
+  <!-- Beta confirmation shown before any download / repository redirect -->
+  <div class="modal" id="downloadModal" hidden role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-backdrop" data-close-modal></div>
+    <div class="modal-card">
+      <button class="modal-close" type="button" data-close-modal aria-label="Close warning">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <div class="modal-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M10.3 3.9 2.6 17.1a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 9v4.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="12" cy="16.8" r="1" fill="currentColor"/></svg>
+      </div>
+      <span class="kicker kicker--amber">Before you continue</span>
+      <h2 id="modalTitle">One quick reminder.</h2>
+      <p>Obryx OS 0.4 Alpha4 is <strong>still in beta</strong> and more updates are on the way. Running it from USB does <strong>not</strong> uninstall Windows or touch your drive — it simply boots alongside your current system. Nothing is installed until you choose to.</p>
+      <ul class="modal-points">
+        <li><span></span> Beta software — expect a few rough edges</li>
+        <li><span></span> Windows stays exactly where it is</li>
+        <li><span></span> You'll need an 8 GB+ USB stick</li>
+      </ul>
+      <div class="modal-actions">
+        <button class="btn btn--primary" id="agreeDownload" type="button">I agree — take me there
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m0 0-5.5-5.5M19 12l-5.5 5.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="btn btn--ghost" type="button" data-close-modal>Maybe later</button>
+      </div>
+      <p class="modal-fine">You'll be sent to the Obryx OS repository.</p>
+    </div>
+  </div>
+
   <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Screenshot viewer">
     <button class="lightbox-close" id="lightboxClose" type="button" aria-label="Close screenshot">
       <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
     </button>
+    <button class="lightbox-nav lightbox-nav--prev" id="lightboxPrev" type="button" aria-label="Previous screenshot">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m14 6-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
     <figure><img id="lightboxImg" alt=""><figcaption id="lightboxCaption"></figcaption></figure>
+    <button class="lightbox-nav lightbox-nav--next" id="lightboxNext" type="button" aria-label="Next screenshot">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m10 6 6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <span class="lightbox-count" id="lightboxCount"></span>
   </div>
 </body>
 </html>
