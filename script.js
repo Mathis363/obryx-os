@@ -34,6 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupDeviceGate();
   setupDownloadButtons();
   setupDownloadModal();
+  setupCredits();
   setupNavigation();
   setupScrollEffects();
   setupRevealAnimations();
@@ -195,6 +196,36 @@ function setupDownloadModal() {
       closeModal();
     });
   }
+}
+
+/* ── Credits modal ────────────────────────────────────────── */
+function setupCredits() {
+  const modal = document.getElementById("creditsModal");
+  if (!modal) return;
+
+  const close = () => {
+    modal.hidden = true;
+    document.body.style.overflow = "";
+    document.getElementById("creditsTrigger")?.focus();
+  };
+
+  document.querySelectorAll("[data-open-credits]").forEach((el) => {
+    el.id = el.id || "creditsTrigger";
+    el.addEventListener("click", (event) => {
+      event.preventDefault();
+      modal.hidden = false;
+      document.body.style.overflow = "hidden";
+      modal.querySelector("[data-close-credits]")?.focus();
+    });
+  });
+
+  modal.querySelectorAll("[data-close-credits]").forEach((el) => {
+    el.addEventListener("click", close);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !modal.hidden) close();
+  });
 }
 
 function downloadIso() {

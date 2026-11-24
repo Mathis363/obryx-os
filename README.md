@@ -45,7 +45,7 @@ Voir [`assets/screenshots/README.md`](assets/screenshots/README.md). En résumé
 
 ## 3. Modifier le contenu
 
-- `index.html` — textes et structure (tout est en anglais).
+- `index.html` — textes et structure (tout est en anglais). Les crédits sont dans le footer et dans une fenêtre **Credits** : site par **M_N_M_S** pour **MDZ**, Obryx OS créé par **MDZ**.
 - `styles.css` — couleurs, animations, mise en page responsive.
 - `enhance.css` — couche « showcase » (interface OS animée, bento, HUD, modal, effets 3D).
 - `script.js` — URL de téléchargement, fenêtre beta, copie du hash, menu, lightbox, animations.
