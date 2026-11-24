@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Obryx OS — Private console · v3.2</title>
+  <title>Obryx OS — Private console · v3.3</title>
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -158,6 +158,9 @@
     .gallery-actions { display: flex; flex-wrap: wrap; gap: 5px; }
     .gallery-actions button { padding: 6px 8px; font-size: .66rem; }
     .gallery-actions button.danger { color: var(--red); }
+    .gallery-rename { display: flex; gap: 5px; margin: 6px 0 9px; }
+    .gallery-rename input { flex: 1; min-width: 0; padding: 7px 8px; border: 1px solid rgba(87,230,197,.45); border-radius: 8px; background: rgba(87,230,197,.05); color: var(--text); font: .68rem var(--mono); outline: none; }
+    .gallery-rename button { padding: 6px 8px; font-size: .66rem; }
     .storage-note { margin: -6px 0 18px; font-family: var(--mono); font-size: .65rem; color: var(--muted); }
     .toggle { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 12px; padding: 13px 15px; border: 1px solid var(--border); border-radius: 12px; background: rgba(255,255,255,.025); cursor: pointer; }
     .toggle span:first-child { font-size: .85rem; }
@@ -187,7 +190,7 @@
 <body>
   <main class="shell">
     <section id="lockView" class="panel">
-      <div class="mark"><i></i> Obryx OS // private console <span class="ver">v3.2</span></div>
+      <div class="mark"><i></i> Obryx OS // private console <span class="ver">v3.3</span></div>
       <h1>Private settings.</h1>
       <p class="lead">Enter your code to change the download link, the look and the behaviour of the main site in this browser.</p>
       <form id="lockForm">
@@ -198,10 +201,10 @@
     </section>
 
     <section id="adminView" class="panel" hidden>
-      <div class="mark"><i></i> Obryx OS // private console <span class="ver">v3.2</span></div>
+      <div class="mark"><i></i> Obryx OS // private console <span class="ver">v3.3</span></div>
       <h1>Control center.</h1>
       <p class="lead">Everything is saved in <strong>this browser only</strong>. Reload the main site after a change.</p>
-      <div class="whats-new"><b>What's new in v3.2</b><span>New Gallery tab: view, delete, reorder and add screenshots. Visitors, Diagnostics and custom colour are still here. Hard-refresh with Ctrl + F5 if needed.</span></div>
+      <div class="whats-new"><b>What's new in v3.3</b><span>Gallery now supports renaming screenshots inline (View / Rename / ↑ / ↓ / Delete). Visitors, Diagnostics and custom colour are still here. Hard-refresh with Ctrl + F5 if needed.</span></div>
 
       <div class="status" id="statusGrid" aria-live="polite">
         <div><small>Link</small><b id="statusLink">Not set</b></div>
@@ -514,6 +517,25 @@
       fill();
     }
 
+    function saveRename(index, value) {
+      const items = galleryItems();
+      const item = items[index];
+      if (!item) return;
+      const oldTitle = item.title;
+      const next = value.trim().slice(0, 80) || oldTitle;
+      item.title = next;
+      if (!item.alt || item.alt === oldTitle) item.alt = next;
+      saveGallery(items);
+      message(galleryMsg, `Renamed to "${next}".`);
+    }
+
+    function cancelRename(index) {
+      const card = document.querySelectorAll(".gallery-item")[index];
+      if (!card) return;
+      card.querySelector(".gallery-name").hidden = false;
+      card.querySelector(".gallery-rename").hidden = true;
+    }
+
     function renderGallery() {
       const list = document.getElementById("galleryList");
       const items = galleryItems();
@@ -535,6 +557,34 @@
         name.className = "gallery-name";
         name.textContent = item.title;
 
+        const rename = document.createElement("div");
+        rename.className = "gallery-rename";
+        rename.hidden = true;
+        const renameInput = document.createElement("input");
+        renameInput.type = "text";
+        renameInput.maxLength = 80;
+        renameInput.value = item.title;
+        renameInput.placeholder = "Screenshot name";
+        renameInput.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") { event.preventDefault(); saveRename(index, renameInput.value); }
+          if (event.key === "Escape") { event.preventDefault(); cancelRename(index); }
+        });
+        const renameSave = document.createElement("button");
+        renameSave.type = "button";
+        renameSave.className = "small primary";
+        renameSave.textContent = "Save";
+        renameSave.dataset.action = "rename-save";
+        renameSave.dataset.index = index;
+        const renameCancel = document.createElement("button");
+        renameCancel.type = "button";
+        renameCancel.className = "small";
+        renameCancel.textContent = "Cancel";
+        renameCancel.dataset.action = "rename-cancel";
+        renameCancel.dataset.index = index;
+        rename.appendChild(renameInput);
+        rename.appendChild(renameSave);
+        rename.appendChild(renameCancel);
+
         const src = document.createElement("span");
         src.className = "gallery-src";
         src.textContent = item.src.startsWith("data:") ? "Uploaded image" : item.src;
@@ -544,6 +594,7 @@
         actions.className = "gallery-actions";
         [
           ["view", "View"],
+          ["rename", "Rename"],
           ["up", "↑"],
           ["down", "↓"],
           ["remove", "Delete"]
@@ -561,6 +612,7 @@
 
         card.appendChild(img);
         card.appendChild(name);
+        card.appendChild(rename);
         card.appendChild(src);
         card.appendChild(actions);
         list.appendChild(card);
@@ -775,6 +827,25 @@
       const item = items[index];
       if (!item) return;
 
+      const card = document.querySelectorAll(".gallery-item")[index];
+      if (action === "rename") {
+        if (!card) return;
+        card.querySelector(".gallery-name").hidden = true;
+        card.querySelector(".gallery-rename").hidden = false;
+        const input = card.querySelector(".gallery-rename input");
+        input.focus();
+        input.select();
+        return;
+      }
+      if (action === "rename-save") {
+        if (!card) return;
+        saveRename(index, card.querySelector(".gallery-rename input").value);
+        return;
+      }
+      if (action === "rename-cancel") {
+        cancelRename(index);
+        return;
+      }
       if (action === "view") {
         window.open(item.src, "_blank", "noopener");
         return;
