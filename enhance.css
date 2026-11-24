@@ -297,7 +297,7 @@ body::after {
 .ghost-number i { font-style: normal; }
 /* Negative letter-spacing tucks the second digit under the first — push it right. */
 .ghost-number i + i { transform: translateX(8px); }
-.section-head--split .ghost-number { right: 0; left: auto; top: -76px; }
+.section-head--split .ghost-number { left: 50%; right: auto; top: -76px; transform: translateX(-50%); }
 
 /* ── Bento requirement cards ───────────────────────────────── */
 .requirements-section::before {
