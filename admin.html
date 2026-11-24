@@ -3,7 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Obryx OS — Private console</title>
+  <title>Obryx OS — Private console · v3</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -77,6 +80,10 @@
     .mark { display: flex; align-items: center; gap: 10px; margin-bottom: 26px; font-family: var(--mono); font-size: .72rem; letter-spacing: .17em; text-transform: uppercase; color: var(--teal); }
     .mark i { width: 9px; height: 9px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 16px var(--teal); animation: pulse 2.2s ease-in-out infinite; }
     @keyframes pulse { 50% { opacity: .45; transform: scale(.8); } }
+    .ver { margin-left: auto; padding: 4px 9px; border: 1px solid rgba(87,230,197,.4); border-radius: 999px; background: rgba(87,230,197,.1); font-size: .62rem; letter-spacing: .08em; color: var(--teal); white-space: nowrap; }
+    .whats-new { margin: 0 0 22px; padding: 13px 15px; border: 1px solid rgba(255,196,107,.32); border-left: 3px solid var(--amber); border-radius: 10px; background: rgba(255,196,107,.06); }
+    .whats-new b { display: block; margin-bottom: 5px; font-family: var(--mono); font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; color: var(--amber); }
+    .whats-new span { display: block; font-size: .78rem; line-height: 1.55; color: #c9d3e8; }
     h1 { font-size: clamp(1.9rem, 5vw, 2.5rem); letter-spacing: -.05em; line-height: 1.08; margin: 0 0 10px; }
     h2 { margin: 0 0 16px; font-size: 1.12rem; letter-spacing: -.03em; color: var(--amber); }
     p.lead { color: var(--muted); font-size: .92rem; line-height: 1.6; margin: 0 0 24px; }
@@ -171,7 +178,7 @@
 <body>
   <main class="shell">
     <section id="lockView" class="panel">
-      <div class="mark"><i></i> Obryx OS // private console</div>
+      <div class="mark"><i></i> Obryx OS // private console <span class="ver">v3</span></div>
       <h1>Private settings.</h1>
       <p class="lead">Enter your code to change the download link, the look and the behaviour of the main site in this browser.</p>
       <form id="lockForm">
@@ -182,9 +189,10 @@
     </section>
 
     <section id="adminView" class="panel" hidden>
-      <div class="mark"><i></i> Obryx OS // private console</div>
+      <div class="mark"><i></i> Obryx OS // private console <span class="ver">v3</span></div>
       <h1>Control center.</h1>
       <p class="lead">Everything is saved in <strong>this browser only</strong>. Reload the main site after a change.</p>
+      <div class="whats-new"><b>What's new in v3</b><span>Visitors tab (today / 7 days / chart + optional worldwide counter), Diagnostics tab, custom accent colour. If you don't see these tabs, hard-refresh with Ctrl + F5.</span></div>
 
       <div class="status" id="statusGrid" aria-live="polite">
         <div><small>Link</small><b id="statusLink">Not set</b></div>
