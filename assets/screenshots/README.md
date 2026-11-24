@@ -1,15 +1,19 @@
 # Screenshots
 
-Trois images provisoires sont déjà présentes dans ce dossier pour montrer à quoi ressemblera la galerie. **Remplace-les simplement par tes vraies captures** en gardant exactement les mêmes noms :
+Les 7 captures envoyées sont intégrées à la galerie, dans l'ordre reçu :
 
-| Fichier | Emplacement sur le site |
+| Fichier | Carte |
 | --- | --- |
-| `01-desktop.png` | « The live desktop » |
-| `02-apps.png` | « Apps at a glance » |
-| `03-settings.png` | « Under the hood » |
+| `01-desktop.png` | Screenshot 01 |
+| `02-apps.png` | Screenshot 02 |
+| `03-settings.png` | Screenshot 03 |
+| `04-desktop-2.png` | Screenshot 04 |
+| `05-apps-2.png` | Screenshot 05 |
+| `06-settings-2.png` | Screenshot 06 |
+| `07-desktop-3.png` | Screenshot 07 |
 
-Le site détecte les images automatiquement au chargement : l'illustration provisoire est remplacée par l'image du dossier, avec un clic pour l'agrandir. **Aucune modification du HTML n'est nécessaire.**
+Elles sont toutes en 1280 × 800 (format 16:10), ce qui correspond exactement au format des cartes. Un clic sur une image l'ouvre en grand.
 
-Si tu veux ajouter une 4e capture, duplique un bloc `<figure class="shot">` dans `index.html` et pointe son attribut `data-shot` vers le nouveau fichier.
+Pour remplacer une capture, écrase simplement le fichier correspondant : aucun changement de code n'est nécessaire. Pour en ajouter une 8e, duplique un bloc `<figure class="shot">` dans `index.html` et pointe son attribut `data-shot` (et son `src`) vers le nouveau fichier.
 
-Conseils : format 16:10 ou 16:9, au moins 1280 px de large, et des noms de fichiers sans accents ni espaces.
+Conseils : garde le même format 16:10 ou 16:9, au moins 1280 px de large, et des noms de fichiers sans accents ni espaces.
