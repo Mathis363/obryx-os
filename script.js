@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupCopyButtons();
   setupHeroPointer();
   setupTilt();
+  setupUltra();
   setupScreenshots();
   setupLightbox();
 });
@@ -195,6 +196,7 @@ function setupNavigation() {
 function setupScrollEffects() {
   const bar = document.getElementById("scrollProgress");
   const header = document.getElementById("siteHeader");
+  const backTop = document.getElementById("backTop");
   let queued = false;
 
   const update = () => {
@@ -203,6 +205,7 @@ function setupScrollEffects() {
     const progress = max > 0 ? root.scrollTop / max : 0;
     if (bar) bar.style.transform = `scaleX(${progress})`;
     if (header) header.classList.toggle("is-scrolled", root.scrollTop > 24);
+    if (backTop) backTop.classList.toggle("is-visible", root.scrollTop > 500);
     queued = false;
   };
 
@@ -434,4 +437,151 @@ function closeLightbox() {
   document.getElementById("lightboxImg")?.removeAttribute("src");
   const id = box.dataset.returnFocusId;
   if (id) document.getElementById(id)?.focus();
+}
+
+/* ── ULTRA layer: particles, cursor aura, magnetic buttons ─── */
+function setupUltra() {
+  setupParticleField();
+  setupCursorGlow();
+  setupMagneticButtons();
+}
+
+function prefersLessMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function hasFinePointer() {
+  return window.matchMedia("(pointer: fine)").matches;
+}
+
+function setupParticleField() {
+  const canvas = document.getElementById("particleField");
+  const hero = document.querySelector(".hero");
+  const ctx = canvas && canvas.getContext ? canvas.getContext("2d") : null;
+  if (!canvas || !hero || !ctx) return;
+
+  const still = prefersLessMotion();
+  let width = 0;
+  let height = 0;
+  let particles = [];
+  let running = false;
+  let frameId = 0;
+
+  function resize() {
+    const rect = hero.getBoundingClientRect();
+    width = rect.width;
+    height = rect.height;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(width * dpr);
+    canvas.height = Math.round(height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const count = Math.max(16, Math.min(44, Math.round(width / 26)));
+    particles = Array.from({ length: count }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      vx: (Math.random() - .5) * .22,
+      vy: (Math.random() - .5) * .22,
+      r: Math.random() * 1.3 + .5
+    }));
+  }
+
+  function render() {
+    ctx.clearRect(0, 0, width, height);
+
+    for (const p of particles) {
+      if (!still) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > width) p.vx *= -1;
+        if (p.y < 0 || p.y > height) p.vy *= -1;
+      }
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(190, 235, 224, .4)";
+      ctx.fill();
+    }
+
+    const range = 110;
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const a = particles[i];
+        const b = particles[j];
+        const dx = a.x - b.x;
+        const dy = a.y - b.y;
+        const distSq = dx * dx + dy * dy;
+        if (distSq > range * range) continue;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.strokeStyle = `rgba(87, 230, 197, ${(1 - distSq / (range * range)) * .13})`;
+        ctx.lineWidth = .6;
+        ctx.stroke();
+      }
+    }
+  }
+
+  function frame() {
+    render();
+    if (document.hidden) {
+      running = false;
+      return;
+    }
+    frameId = window.requestAnimationFrame(frame);
+  }
+
+  function start() {
+    if (running || still || document.hidden) return;
+    running = true;
+    frameId = window.requestAnimationFrame(frame);
+  }
+
+  resize();
+  render();
+  start();
+
+  window.addEventListener("resize", () => {
+    resize();
+    render();
+  }, { passive: true });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      running = false;
+      window.cancelAnimationFrame(frameId);
+    } else {
+      start();
+    }
+  });
+}
+
+function setupCursorGlow() {
+  const glow = document.getElementById("cursorGlow");
+  if (!glow || !hasFinePointer() || prefersLessMotion()) return;
+
+  window.addEventListener("pointermove", (event) => {
+    const x = event.clientX - 190;
+    const y = event.clientY - 190;
+    glow.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+  }, { passive: true });
+
+  document.addEventListener("pointerleave", () => { glow.style.opacity = "0"; });
+  document.addEventListener("pointerenter", () => { glow.style.opacity = "1"; });
+}
+
+function setupMagneticButtons() {
+  if (!hasFinePointer() || prefersLessMotion()) return;
+
+  document.querySelectorAll(".btn--primary").forEach((button) => {
+    button.setAttribute("data-magnetic", "");
+    button.addEventListener("pointermove", (event) => {
+      const rect = button.getBoundingClientRect();
+      const dx = (event.clientX - rect.left - rect.width / 2) * .1;
+      const dy = (event.clientY - rect.top - rect.height / 2) * .14;
+      button.style.transform = `translate(${dx.toFixed(1)}px, ${(dy - 3).toFixed(1)}px)`;
+    });
+    button.addEventListener("pointerleave", () => {
+      button.style.transform = "";
+    });
+  });
 }

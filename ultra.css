@@ -1,0 +1,176 @@
+/* ============================================================
+   Obryx OS — ULTRA layer v1
+   Loaded last. Pure enhancement: remove this file and everything
+   still works. Respects reduced motion and touch devices.
+   ============================================================ */
+
+/* ── Layer order ───────────────────────────────────────────── */
+.hero > .container { position: relative; z-index: 2; }
+.particle-field {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  opacity: .72;
+}
+
+/* ── Global cursor aura ───────────────────────────────────── */
+.cursor-glow {
+  position: fixed;
+  left: 0; top: 0;
+  z-index: 90;
+  width: 380px; height: 380px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(87, 230, 197, .10), rgba(124, 140, 255, .05) 42%, transparent 68%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  transform: translate3d(-1000px, -1000px, 0);
+  transition: opacity .4s ease;
+  will-change: transform;
+}
+@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .cursor-glow { display: none; }
+}
+
+/* ── Ticker band ──────────────────────────────────────────── */
+.ticker {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  padding: 13px 0;
+  border-top: 1px solid rgba(255, 255, 255, .06);
+  border-bottom: 1px solid rgba(255, 255, 255, .06);
+  background:
+    linear-gradient(90deg, rgba(87, 230, 197, .05), rgba(124, 140, 255, .05), rgba(180, 123, 255, .05)),
+    rgba(6, 9, 17, .72);
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+.ticker-track {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  width: max-content;
+  animation: ticker-scroll 34s linear infinite;
+  font-family: var(--font-mono);
+  font-size: .7rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: #b7c2d8;
+  white-space: nowrap;
+}
+.ticker-track span { display: inline-block; }
+.ticker-track i { color: var(--teal); font-style: normal; text-shadow: 0 0 12px rgba(87, 230, 197, .7); }
+/* Two identical halves separated by one 30px gap: offset by half a gap too. */
+@keyframes ticker-scroll { to { transform: translateX(calc(-50% - 15px)); } }
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track { animation: none; }
+}
+
+/* ── Back to top ──────────────────────────────────────────── */
+.back-top {
+  position: fixed;
+  right: 24px; bottom: 24px;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  width: 46px; height: 46px;
+  border: 1px solid rgba(87, 230, 197, .3);
+  border-radius: 14px;
+  background: rgba(10, 16, 28, .88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: var(--teal);
+  opacity: 0;
+  transform: translateY(14px) scale(.92);
+  pointer-events: none;
+  transition: opacity .3s ease, transform .35s var(--ease), background .25s ease;
+}
+.back-top.is-visible { opacity: 1; transform: none; pointer-events: auto; }
+.back-top:hover { background: rgba(87, 230, 197, .14); transform: translateY(-4px); }
+.back-top svg { width: 20px; height: 20px; }
+@media (max-width: 700px) {
+  .back-top { right: 14px; bottom: 14px; width: 42px; height: 42px; }
+}
+
+/* ── Magnetic buttons ─────────────────────────────────────── */
+.btn[data-magnetic] { will-change: transform; }
+.btn[data-magnetic]:hover { box-shadow: 0 16px 36px rgba(0, 0, 0, .3); }
+
+/* ── Richer hero typography ───────────────────────────────── */
+.hero h1 {
+  position: relative;
+  text-wrap: balance;
+}
+.hero-lead { text-wrap: pretty; }
+.gradient-text {
+  position: relative;
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+.gradient-text::after {
+  content: "";
+  position: absolute;
+  left: 3%; right: 3%; bottom: -.06em;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--teal), var(--indigo), transparent);
+  opacity: .5;
+  animation: underline-grow 1.1s var(--ease) 1.2s both;
+}
+@keyframes underline-grow { from { transform: scaleX(0); transform-origin: left; } }
+
+/* ── Cards: layered depth on hover ────────────────────────── */
+.req-card, .step, .code-card, .shot {
+  position: relative;
+}
+.req-card::before, .step::after, .code-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(140deg, rgba(87, 230, 197, .55), transparent 45%, rgba(124, 140, 255, .35));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity .4s ease;
+  pointer-events: none;
+}
+.req-card:hover::before, .step:hover::after, .code-card:hover::before { opacity: 1; }
+
+/* `.step::before` is the top scan line — keep `::after` for the glow. */
+.step::after { z-index: 0; }
+
+.shot-frame {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .03);
+}
+.shot:hover .shot-frame {
+  box-shadow: 0 28px 60px rgba(0, 0, 0, .42), 0 0 0 1px rgba(87, 230, 197, .22), inset 0 0 40px rgba(87, 230, 197, .06);
+}
+
+/* ── Verify: code title pulse ─────────────────────────────── */
+.code-title { animation: title-breathe 4s ease-in-out infinite; }
+@keyframes title-breathe {
+  50% { color: var(--teal); text-shadow: 0 0 18px rgba(87, 230, 197, .28); }
+}
+
+/* ── Footer polish ────────────────────────────────────────── */
+.site-footer { position: relative; }
+.site-footer::before {
+  content: "";
+  position: absolute;
+  top: -1px; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(87, 230, 197, .55), transparent);
+  pointer-events: none;
+}
+
+/* ── Reduced motion: freeze the new decorative bits ──────── */
+@media (prefers-reduced-motion: reduce) {
+  .gradient-text::after, .code-title { animation: none !important; }
+  .back-top, .cursor-glow { transition: none; }
+}

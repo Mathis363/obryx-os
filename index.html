@@ -12,7 +12,8 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=3">
   <link rel="stylesheet" href="enhance.css?v=10">
-  <script src="script.js?v=7" defer></script>
+  <link rel="stylesheet" href="ultra.css?v=1">
+  <script src="script.js?v=9" defer></script>
 </head>
 <body>
   <!-- Desktop-only gate: shown automatically on phones and tablets. -->
@@ -33,6 +34,8 @@
       <p class="device-gate__foot">Please open this page on a computer.</p>
     </div>
   </div>
+
+  <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
 
   <a class="skip-link" href="#main">Skip to content</a>
   <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
@@ -76,6 +79,7 @@
   <main id="main">
     <!-- ───────────────────────── HERO ───────────────────────── -->
     <section class="hero" id="top">
+      <canvas class="particle-field" id="particleField" aria-hidden="true"></canvas>
       <div class="container hero-grid">
         <div class="hero-copy">
           <div class="eyebrow reveal"><span class="eyebrow-dot"></span> Obryx OS <span class="eyebrow-sep">/</span> 0.4 Alpha4</div>
@@ -245,6 +249,13 @@
         <p class="steps-note reveal"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 4 6.5v5c0 4.6 3.2 8.4 8 9.5 4.8-1.1 8-4.9 8-9.5v-5L12 3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg> Your files, apps and Windows stay exactly where they are.</p>
       </div>
     </section>
+
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker-track">
+        <span>Try before you install</span><i>✦</i><span>Live from USB</span><i>✦</i><span>Windows untouched</span><i>✦</i><span>64-bit UEFI</span><i>✦</i>
+        <span>Try before you install</span><i>✦</i><span>Live from USB</span><i>✦</i><span>Windows untouched</span><i>✦</i><span>64-bit UEFI</span><i>✦</i>
+      </div>
+    </div>
 
     <!-- ───────────────────────── REQUIREMENTS ───────────────────────── -->
     <section class="section requirements-section" id="requirements">
@@ -419,6 +430,10 @@
       </div>
     </section>
   </main>
+
+  <a class="back-top" id="backTop" href="#top" aria-label="Back to top">
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 19V5m0 0-6 6m6-6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </a>
 
   <footer class="site-footer">
     <div class="container footer-inner">
