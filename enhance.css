@@ -37,16 +37,16 @@ body::after {
 }
 
 /* ── Sharper reveals ───────────────────────────────────────── */
+/* No clip-path here: inset(0) keeps clipping decorations that sit outside
+   the element (ghost numbers, floating badges, dock, HUD labels). */
 .reveal {
   filter: blur(9px);
-  clip-path: inset(0 0 14% 0);
   transition:
     opacity .85s var(--ease) var(--delay, 0s),
     transform .85s var(--ease) var(--delay, 0s),
-    filter .85s var(--ease) var(--delay, 0s),
-    clip-path .85s var(--ease) var(--delay, 0s);
+    filter .85s var(--ease) var(--delay, 0s);
 }
-.reveal.is-visible { filter: none; clip-path: inset(0); }
+.reveal.is-visible { filter: none; }
 
 /* ── Hero typography & ghost word ──────────────────────────── */
 .hero::before {
