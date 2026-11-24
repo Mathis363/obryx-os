@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Obryx OS — Private download settings</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #060911;
+      --text: #f4f7ff;
+      --muted: #9aa6c0;
+      --border: rgba(255,255,255,.1);
+      --teal: #57e6c5;
+      --amber: #ffc46b;
+      --red: #ff7a90;
+      --font: "Space Grotesk", system-ui, sans-serif;
+      --mono: "DM Mono", ui-monospace, monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(700px 400px at 50% -5%, rgba(124,140,255,.14), transparent 70%),
+        radial-gradient(500px 300px at 90% 90%, rgba(87,230,197,.08), transparent 70%),
+        var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+    }
+    .panel {
+      width: min(100%, 560px);
+      padding: clamp(26px, 5vw, 42px);
+      border: 1px solid rgba(87,230,197,.22);
+      border-radius: 24px;
+      background: linear-gradient(150deg, rgba(20,26,40,.96), rgba(9,13,24,.98));
+      box-shadow: 0 40px 100px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.06);
+    }
+    .mark { display: flex; align-items: center; gap: 10px; margin-bottom: 30px; font-family: var(--mono); font-size: .75rem; letter-spacing: .16em; color: var(--teal); text-transform: uppercase; }
+    .mark i { width: 9px; height: 9px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 14px var(--teal); }
+    h1 { font-size: clamp(1.8rem, 5vw, 2.4rem); letter-spacing: -.05em; line-height: 1.1; margin: 0 0 10px; }
+    p.lead { color: var(--muted); font-size: .92rem; margin: 0 0 26px; }
+    label { display: block; margin-bottom: 16px; }
+    label span { display: block; margin-bottom: 7px; font-family: var(--mono); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+    input {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: rgba(255,255,255,.035);
+      color: var(--text);
+      font: .88rem var(--mono);
+      outline: none;
+      transition: border-color .2s, background .2s;
+    }
+    input:focus { border-color: rgba(87,230,197,.55); background: rgba(87,230,197,.05); }
+    .row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+    button, a.btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px 18px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      font: 600 .85rem var(--font);
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform .2s, background .2s, border-color .2s;
+    }
+    button:hover, a.btn:hover { transform: translateY(-2px); background: rgba(255,255,255,.09); }
+    button.primary { background: linear-gradient(135deg, var(--teal), #8ef0d7); border-color: transparent; color: #04131a; }
+    button.danger { color: var(--red); }
+    .msg { min-height: 20px; margin-top: 16px; font-family: var(--mono); font-size: .74rem; color: var(--teal); }
+    .msg.error { color: var(--red); }
+    .fine { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border); font-size: .72rem; color: var(--muted); line-height: 1.6; }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <main class="panel">
+    <div class="mark"><i></i> Obryx OS // private console</div>
+
+    <section id="lockView">
+      <h1>Private settings.</h1>
+      <p class="lead">Enter your code to change the download link used by the main site in this browser.</p>
+      <form id="lockForm">
+        <label><span>Access code</span><input id="codeInput" type="password" autocomplete="current-password" required placeholder="••••••••"></label>
+        <div class="row"><button class="primary" type="submit">Unlock</button><a class="btn" href="index.html">Back to site</a></div>
+        <div class="msg error" id="lockMsg"></div>
+      </form>
+    </section>
+
+    <section id="adminView" hidden>
+      <h1>Download settings.</h1>
+      <p class="lead">These values are saved only in <strong>this browser</strong>. Nobody else visiting the site will see them.</p>
+      <form id="configForm">
+        <label><span>Direct ISO URL</span><input id="urlInput" type="url" placeholder="https://example.com/Obryx-OS-0.4-Alpha4-x86_64.iso"></label>
+        <label><span>Saved filename</span><input id="nameInput" type="text" placeholder="Obryx-OS-0.4-Alpha4-x86_64.iso"></label>
+        <label><span>SHA-256</span><input id="hashInput" type="text" placeholder="46d071d4d011ff0…"></label>
+        <div class="row">
+          <button class="primary" type="submit">Save</button>
+          <button type="button" id="testBtn">Test download</button>
+          <button type="button" class="danger" id="clearBtn">Clear</button>
+          <a class="btn" href="index.html">Back to site</a>
+        </div>
+        <div class="msg" id="adminMsg"></div>
+      </form>
+      <p class="fine">The ISO itself must be hosted somewhere that allows large files — GitHub Pages and Releases cannot store 3.7 GB. This console only changes the link your browser uses; it is client-side, not real server security. Change <code>ADMIN_CODE</code> in this file to your own code.</p>
+    </section>
+  </main>
+
+  <script>
+    // 👉 CHANGE THIS to your own private code.
+    const ADMIN_CODE = "obryx-admin";
+    const KEY = "obryxAdminConfig";
+
+    const lockView = document.getElementById("lockView");
+    const adminView = document.getElementById("adminView");
+    const lockForm = document.getElementById("lockForm");
+    const configForm = document.getElementById("configForm");
+    const lockMsg = document.getElementById("lockMsg");
+    const adminMsg = document.getElementById("adminMsg");
+    const urlInput = document.getElementById("urlInput");
+    const nameInput = document.getElementById("nameInput");
+    const hashInput = document.getElementById("hashInput");
+
+    function read() {
+      try { return JSON.parse(localStorage.getItem(KEY) || "{}") || {}; }
+      catch (_) { return {}; }
+    }
+    function write(config) { localStorage.setItem(KEY, JSON.stringify(config)); }
+    function message(el, text, isError) {
+      el.textContent = text;
+      el.classList.toggle("error", !!isError);
+    }
+
+    function fill() {
+      const c = read();
+      urlInput.value = c.downloadUrl || "";
+      nameInput.value = c.isoFilename || "Obryx-OS-0.4-Alpha4-x86_64.iso";
+      hashInput.value = c.hash || "46d071d4d011ff0061a7baf3316e9689484490169a2b9ca1ca892a2e712cbefb";
+      message(adminMsg, c.downloadUrl ? "A download link is saved for this browser." : "No link saved yet.", !c.downloadUrl);
+    }
+
+    lockForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (document.getElementById("codeInput").value === ADMIN_CODE) {
+        lockView.hidden = true;
+        adminView.hidden = false;
+        fill();
+      } else {
+        message(lockMsg, "Wrong code.", true);
+      }
+    });
+
+    configForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const url = urlInput.value.trim();
+      if (url && !/^https?:\/\//i.test(url)) {
+        message(adminMsg, "The URL must start with http:// or https://", true);
+        return;
+      }
+      write({
+        downloadUrl: url,
+        isoFilename: nameInput.value.trim() || "Obryx-OS-0.4-Alpha4-x86_64.iso",
+        hash: hashInput.value.trim()
+      });
+      fill();
+      message(adminMsg, "Saved. Reload the main site to use it.");
+    });
+
+    document.getElementById("testBtn").addEventListener("click", () => {
+      const c = read();
+      if (!c.downloadUrl) { message(adminMsg, "Save a URL first.", true); return; }
+      const a = document.createElement("a");
+      a.href = c.downloadUrl;
+      a.download = c.isoFilename || "Obryx-OS-0.4-Alpha4-x86_64.iso";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      message(adminMsg, "Download started in this browser.");
+    });
+
+    document.getElementById("clearBtn").addEventListener("click", () => {
+      localStorage.removeItem(KEY);
+      fill();
+      message(adminMsg, "Cleared. The main site will not download anything until you save a link again.", true);
+    });
+  </script>
+</body>
+</html>

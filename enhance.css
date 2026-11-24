@@ -477,6 +477,7 @@ kbd {
 .modal-points span { flex: 0 0 6px; height: 6px; margin-top: 9px; border-radius: 50%; background: var(--amber); }
 .modal-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .modal-fine { margin-top: 18px !important; font-size: .72rem !important; color: var(--muted-dim) !important; }
+.modal-fine.is-warning { color: var(--amber) !important; }
 
 /* ── Lightbox navigation ───────────────────────────────────── */
 .lightbox-nav {

@@ -11,8 +11,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=3">
-  <link rel="stylesheet" href="enhance.css?v=8">
-  <script src="script.js?v=5" defer></script>
+  <link rel="stylesheet" href="enhance.css?v=9">
+  <script src="script.js?v=6" defer></script>
 </head>
 <body>
   <!-- Desktop-only gate: shown automatically on phones and tablets. -->
@@ -455,12 +455,12 @@
         <li><span></span> You'll need an 8 GB+ USB stick</li>
       </ul>
       <div class="modal-actions">
-        <button class="btn btn--primary" id="agreeDownload" type="button">I agree — take me there
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m0 0-5.5-5.5M19 12l-5.5 5.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <button class="btn btn--primary" id="agreeDownload" type="button">I agree — download ISO
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v12m0 0 4.5-4.5M12 15l-4.5-4.5M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
         <button class="btn btn--ghost" type="button" data-close-modal>Maybe later</button>
       </div>
-      <p class="modal-fine">You'll be sent to the Obryx OS repository.</p>
+      <p class="modal-fine" id="downloadFine">The ISO will be saved to your Downloads folder.</p>
     </div>
   </div>
 

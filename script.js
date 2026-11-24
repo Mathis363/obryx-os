@@ -1,24 +1,24 @@
 /* ============================================================
    Obryx OS — interactions
    ------------------------------------------------------------
-   CONFIG — two things you may want to change:
-   1) DOWNLOAD_URL: direct link to the ISO once it is hosted.
-      For now the "I agree" button opens the GitHub repository.
-      (A 3.7 GB ISO cannot live in a GitHub repo or on Pages,
-       and release assets are capped at 2 GiB.)
-   2) EXPECTED_HASH / ISO_FILENAME: update for future releases.
+   The ISO link, filename and hash are private per browser.
+   Open admin.html, enter your code, and save them there.
+   Without a saved link the download simply can't start — the
+   site no longer redirects to the repository.
    ============================================================ */
 
-const DOWNLOAD_URL = "https://github.com/Mathis363/obryx-os";
+const ADMIN_CONFIG_KEY = "obryxAdminConfig";
 
-const ISO_FILENAME = "Obryx-OS-0.4-Alpha4-x86_64.iso";
-const EXPECTED_HASH = "46d071d4d011ff0061a7baf3316e9689484490169a2b9ca1ca892a2e712cbefb";
-const VERIFY_COMMAND = `(Get-FileHash .\\${ISO_FILENAME}).Hash`;
+let DOWNLOAD_URL = "";
+let ISO_FILENAME = "Obryx-OS-0.4-Alpha4-x86_64.iso";
+let EXPECTED_HASH = "46d071d4d011ff0061a7baf3316e9689484490169a2b9ca1ca892a2e712cbefb";
+let VERIFY_COMMAND = buildVerifyCommand();
 
 let lightboxItems = [];
 let lightboxIndex = 0;
 
 document.addEventListener("DOMContentLoaded", () => {
+  loadAdminConfig();
   setupDeviceGate();
   setupDownloadButtons();
   setupDownloadModal();
@@ -32,6 +32,23 @@ document.addEventListener("DOMContentLoaded", () => {
   setupScreenshots();
   setupLightbox();
 });
+
+/* ── Private, per-browser download configuration ───────────── */
+function buildVerifyCommand() {
+  return `(Get-FileHash .\\${ISO_FILENAME}).Hash`;
+}
+
+function loadAdminConfig() {
+  let saved = {};
+  try {
+    saved = JSON.parse(localStorage.getItem(ADMIN_CONFIG_KEY) || "{}") || {};
+  } catch (_) { /* ignore broken saved data */ }
+
+  if (typeof saved.downloadUrl === "string") DOWNLOAD_URL = saved.downloadUrl.trim();
+  if (typeof saved.isoFilename === "string" && saved.isoFilename.trim()) ISO_FILENAME = saved.isoFilename.trim();
+  if (typeof saved.hash === "string" && saved.hash.trim()) EXPECTED_HASH = saved.hash.trim();
+  VERIFY_COMMAND = buildVerifyCommand();
+}
 
 /* ── Desktop-only gate: block phones and tablets ───────────── */
 function setupDeviceGate() {
@@ -88,14 +105,38 @@ function setupDownloadModal() {
   const agree = document.getElementById("agreeDownload");
   if (agree) {
     agree.addEventListener("click", () => {
-      window.location.href = DOWNLOAD_URL;
+      if (!DOWNLOAD_URL) {
+        const fine = document.getElementById("downloadFine");
+        if (fine) {
+          fine.textContent = "No ISO link is configured for this browser. Ask the admin to set it in admin.html.";
+          fine.classList.add("is-warning");
+        }
+        return;
+      }
+      downloadIso();
+      closeModal();
     });
   }
+}
+
+function downloadIso() {
+  const link = document.createElement("a");
+  link.href = DOWNLOAD_URL;
+  link.download = ISO_FILENAME;
+  link.rel = "noopener";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
 }
 
 function openDownloadModal(trigger) {
   const modal = document.getElementById("downloadModal");
   if (!modal) return;
+  const fine = document.getElementById("downloadFine");
+  if (fine) {
+    fine.textContent = "The ISO will be saved to your Downloads folder.";
+    fine.classList.remove("is-warning");
+  }
   modal.dataset.trigger = trigger && trigger.id ? trigger.id : "";
   modal.hidden = false;
   document.body.style.overflow = "hidden";
@@ -218,11 +259,11 @@ function setupActiveLinks() {
 
 /* ── Copy command / hash ───────────────────────────────────── */
 function setupCopyButtons() {
-  const values = { command: VERIFY_COMMAND, hash: EXPECTED_HASH };
+  const values = { command: () => VERIFY_COMMAND, hash: () => EXPECTED_HASH };
 
   document.querySelectorAll("[data-copy]").forEach((button) => {
     button.addEventListener("click", async () => {
-      const text = values[button.dataset.copy];
+      const text = values[button.dataset.copy]?.();
       if (!text) return;
       const ok = await copyToClipboard(text);
       const label = button.querySelector("span");
