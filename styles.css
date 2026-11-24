@@ -394,8 +394,18 @@ ul, ol { padding: 0; list-style: none; }
   transform: translate(-50%, -50%);
   pointer-events: none;
 }
-.orbit--outer { width: 100%; padding-bottom: 100%; animation: spin 46s linear infinite; }
-.orbit--inner { width: 82%; padding-bottom: 82%; border-style: dashed; border-color: rgba(87, 230, 197, .13); animation: spin 34s linear infinite reverse; }
+/* The spin keyframes must keep the centering translate, otherwise the rings
+   drift to the right and get clipped by the viewport. */
+@keyframes orbit-spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(360deg); }
+}
+@keyframes orbit-spin-reverse {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(-360deg); }
+}
+.orbit--outer { width: 100%; padding-bottom: 100%; animation: orbit-spin 46s linear infinite; }
+.orbit--inner { width: 82%; padding-bottom: 82%; border-style: dashed; border-color: rgba(87, 230, 197, .13); animation: orbit-spin-reverse 34s linear infinite; }
 .orbit::after {
   content: "";
   position: absolute;
@@ -604,7 +614,8 @@ ul, ol { padding: 0; list-style: none; }
   line-height: 1;
   font-weight: 500;
   letter-spacing: -.06em;
-  color: rgba(255, 255, 255, .13);
+  color: rgba(87, 230, 197, .55);
+  text-shadow: 0 0 22px rgba(87, 230, 197, .16);
 }
 .step-icon {
   display: grid; place-items: center;

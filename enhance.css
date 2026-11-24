@@ -274,7 +274,7 @@ body::after {
 .dock:hover .dock-icon { transform: translateY(-4px); }
 .dock-icon--teal { background: linear-gradient(140deg, var(--teal), var(--indigo)); color: #06121a; }
 .dock-divider { width: 1px; height: 22px; background: var(--border); }
-.float-badge--top { top: -3%; right: -10px; }
+.float-badge--top { top: -3%; right: 0; }
 .float-badge--bottom { bottom: 13%; left: -24px; }
 
 /* ── Ghost section numbers ─────────────────────────────────── */
@@ -324,7 +324,7 @@ body::after {
 
 /* ── Steps: keycaps + sharper glass ────────────────────────── */
 .step { backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-.step:hover .step-number { color: rgba(87, 230, 197, .22); }
+.step:hover .step-number { color: rgba(87, 230, 197, .95); }
 kbd {
   display: inline-flex;
   align-items: center;
@@ -505,6 +505,11 @@ kbd {
   .req-grid { grid-template-columns: repeat(2, 1fr); }
   .req-card:nth-child(n) { grid-column: span 1; min-height: 190px; }
   .hero::before { display: none; }
+}
+@media (max-width: 937px) {
+  /* Match the base breakpoint: no 3D perspective on stacked layouts. */
+  .terminal-card { transform: none; }
+  .hero-visual:hover .terminal-card { transform: translateY(-4px); }
 }
 @media (max-width: 900px) {
   .desktop-ui { min-height: 280px; }
