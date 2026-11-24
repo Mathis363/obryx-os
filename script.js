@@ -28,6 +28,39 @@ const DEFAULT_APPEARANCE = {
   backTop: true
 };
 
+const DOCK_PANELS = {
+  desktop: {
+    kicker: "Obryx OS 0.4 Alpha4",
+    title: "Live desktop",
+    text: "A full desktop running straight from your USB stick — nothing is installed.",
+    lines: [["Mode", "LIVE / USB"], ["Setup", "None needed"], ["Windows", "Untouched"]]
+  },
+  files: {
+    kicker: "Your files",
+    title: "Files stay put",
+    text: "The live session is read-only until you choose to install. Your documents stay exactly where they are.",
+    lines: [["Documents", "Untouched"], ["Drive", "Read-only"], ["Password", "Not needed"]]
+  },
+  terminal: {
+    kicker: "Terminal",
+    title: "Under the hood",
+    text: "A quick look at what the live session reports when it starts.",
+    lines: [["Command", "obryx info"], ["Boot", "UEFI · x86_64"], ["Result", "OK ✓"]]
+  },
+  updates: {
+    kicker: "Build 0.4 Alpha4",
+    title: "Still in beta",
+    text: "Obryx OS is still beta. More updates are coming, and Windows stays right where it is.",
+    lines: [["Stage", "Beta"], ["Updates", "Planned"], ["Install", "Optional"]]
+  },
+  power: {
+    kicker: "Power",
+    title: "End the session",
+    text: "Shut down the live session and your PC boots back into Windows. Nothing was installed.",
+    lines: [["Action", "Shut down"], ["Next boot", "Windows"], ["Changes", "None"]]
+  }
+};
+
 const DEFAULT_COPY = {
   eyebrow: "Obryx OS / 0.4 Alpha4",
   heroTop: "Try Linux first.",
@@ -79,6 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupActiveLinks();
   setupCopyButtons();
   setupHeroPointer();
+  setupDock();
   setupTilt();
   setupUltra();
   setupScreenshots();
@@ -590,6 +624,69 @@ function setupHeroPointer() {
     const y = ((event.clientY - rect.top) / rect.height) * 100;
     visual.style.setProperty("--mx", `${x}%`);
     visual.style.setProperty("--my", `${y}%`);
+  });
+}
+
+/* ── Interactive dock: one panel per icon ──────────────────── */
+function setupDock() {
+  const panel = document.getElementById("dockPanel");
+  const buttons = [...document.querySelectorAll(".dock-icon[data-dock]")];
+  if (!panel || !buttons.length) return;
+
+  const kicker = document.getElementById("dockPanelKicker");
+  const title = document.getElementById("dockPanelTitle");
+  const text = document.getElementById("dockPanelText");
+  const lines = document.getElementById("dockPanelLines");
+  let current = null;
+
+  function close() {
+    current = null;
+    panel.classList.remove("is-open");
+    panel.setAttribute("aria-hidden", "true");
+    buttons.forEach((button) => {
+      button.classList.remove("is-active");
+      button.setAttribute("aria-pressed", "false");
+    });
+  }
+
+  buttons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const key = button.dataset.dock;
+      if (current === key) { close(); return; }
+      const data = DOCK_PANELS[key];
+      if (!data) return;
+
+      current = key;
+      kicker.textContent = data.kicker;
+      title.textContent = data.title;
+      text.textContent = data.text;
+      lines.replaceChildren(...data.lines.map(([label, value]) => {
+        const item = document.createElement("li");
+        const name = document.createElement("span");
+        name.textContent = label;
+        const val = document.createElement("b");
+        val.textContent = value;
+        item.appendChild(name);
+        item.appendChild(val);
+        return item;
+      }));
+
+      buttons.forEach((other) => {
+        const active = other === button;
+        other.classList.toggle("is-active", active);
+        other.setAttribute("aria-pressed", String(active));
+      });
+      panel.classList.add("is-open");
+      panel.setAttribute("aria-hidden", "false");
+    });
+  });
+
+  document.getElementById("dockPanelClose")?.addEventListener("click", close);
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && current) close();
+  });
+  document.addEventListener("click", (event) => {
+    if (current && !event.target.closest(".dock, .dock-panel")) close();
   });
 }
 

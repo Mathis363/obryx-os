@@ -50,7 +50,7 @@ Voir [`assets/screenshots/README.md`](assets/screenshots/README.md). En résumé
 - `index.html` — textes et structure (tout est en anglais). Les crédits sont dans le footer et dans une fenêtre **Credits** : site par **M_N_M_S** pour **MDZ**, Obryx OS créé par **MDZ**.
 - `styles.css` — couleurs, animations, mise en page responsive.
 - `enhance.css` — couche « showcase » (interface OS animée, bento, HUD, modal, effets 3D).
-- `script.js` — URL de téléchargement, fenêtre beta, copie du hash, menu, lightbox, animations.
+- `script.js` — URL de téléchargement, fenêtre beta, copie du hash, menu, lightbox, animations et dock interactif du hero (5 icônes cliquables, chacune avec son panneau ; survol qui soulève les icônes une par une).
 
 Couleurs principales à changer dans `:root` en haut de `styles.css` : `--teal`, `--indigo`, `--violet`, `--lime`.
 

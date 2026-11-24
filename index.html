@@ -11,9 +11,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=3">
-  <link rel="stylesheet" href="enhance.css?v=10">
+  <link rel="stylesheet" href="enhance.css?v=11">
   <link rel="stylesheet" href="ultra.css?v=5">
-  <script src="script.js?v=16" defer></script>
+  <script src="script.js?v=17" defer></script>
 </head>
 <body>
   <!-- Desktop-only gate: shown automatically on phones and tablets. -->
@@ -157,13 +157,21 @@
             <div class="terminal-bottom"><span class="tb-dot"></span> Live mode active <span class="tb-sep">/</span> no changes to disk</div>
           </div>
 
-          <div class="dock" aria-hidden="true">
-            <span class="dock-icon dock-icon--teal">◈</span>
-            <span class="dock-icon">▤</span>
-            <span class="dock-icon">⌘</span>
-            <span class="dock-icon">◉</span>
+          <div class="dock" role="toolbar" aria-label="Live session dock">
+            <button class="dock-icon dock-icon--teal" type="button" data-dock="desktop" aria-label="Live desktop" aria-pressed="false">◈</button>
+            <button class="dock-icon" type="button" data-dock="files" aria-label="Your files" aria-pressed="false">▤</button>
+            <button class="dock-icon" type="button" data-dock="terminal" aria-label="Terminal" aria-pressed="false">⌘</button>
+            <button class="dock-icon" type="button" data-dock="updates" aria-label="Build updates" aria-pressed="false">◉</button>
             <span class="dock-divider"></span>
-            <span class="dock-icon">⏻</span>
+            <button class="dock-icon" type="button" data-dock="power" aria-label="Power" aria-pressed="false">⏻</button>
+          </div>
+
+          <div class="dock-panel" id="dockPanel" role="dialog" aria-label="Dock details" aria-hidden="true">
+            <button class="dock-panel__close" id="dockPanelClose" type="button" aria-label="Close panel">×</button>
+            <span class="dock-panel__kicker" id="dockPanelKicker"></span>
+            <strong class="dock-panel__title" id="dockPanelTitle"></strong>
+            <p class="dock-panel__text" id="dockPanelText"></p>
+            <ul class="dock-panel__lines" id="dockPanelLines"></ul>
           </div>
 
           <div class="float-badge float-badge--top">
