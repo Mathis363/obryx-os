@@ -27,9 +27,10 @@ Tous les boutons « Download » affichent d'abord la fenêtre d'avertissement be
 
 Le lien, le nom de fichier et le hash se règlent depuis `admin.html` (code par défaut : `obryx-admin`, à changer dans l'interface). Ils sont sauvegardés dans le `localStorage` **de ton navigateur uniquement** : les autres visiteurs n'ont aucun lien configuré. Si aucun lien n'est sauvegardé, le bouton affiche un avertissement au lieu de télécharger.
 
-La console admin contient sept onglets :
+La console admin contient huit onglets :
 - **Download** : presets GoFile / URL directe / fichier local, validation SHA-256, copie du lien et du hash.
 - **Appearance** : couleur d'accent (teal / indigo / amber / violet / **couleur personnalisée**) et activation des particules, boutons magnétiques, ticker et bouton « retour en haut ».
+- **Style** : presets Neon / Clean / Midnight / Retro, réglages de glow, grain, scanlines, vignette, coins HUD, shine du hero, rayon des cartes, vitesse des animations et taille du titre ; textes éditables (eyebrow, titre, paragraphe, fine print, ticker) et CSS personnalisé filtré (imports/scripts bloqués).
 - **Visitors** : nombre de visites **aujourd'hui**, hier, sur 7 jours et au total, avec graphique sur 7 jours. Le compteur est local à chaque navigateur (`obryxVisits`, 30 jours max). Pour un compteur **mondial**, renseigne une URL de service type `countapi.xyz` : chaque chargement du site enverra un hit.
 - **Gallery** : voir les captures, les **renommer** (édition sur place), les supprimer, les réordonner ou en ajouter (fichier image redimensionné ou URL). La galerie publique suit cette configuration ; le bouton *Restore defaults* ramène les 7 captures d'origine. Les images uploadées restent dans le `localStorage` du navigateur — utilise **Transfer** pour les partager.
 - **Security** : changement du code, verrouillage immédiat, reset complet (historique de visites et galerie inclus).
@@ -79,7 +80,7 @@ python -m http.server 8000
 `ObryxAdmin.exe` (à la racine du dépôt) ouvre **la vraie console admin** du site dans une fenêtre Windows dédiée :
 
 - code d'accès **`obryx-admin` intégré** → déverrouillage automatique ;
-- tous les onglets du site : Download, Appearance, Visitors, Security, Transfer, Diagnostics ;
+- tous les onglets du site : Download, Appearance, Style, Visitors, Gallery, Security, Transfer, Diagnostics ;
 - barre d'outils intégrée : *Open site*, *Copy config* ;
 - stockage WebView persistant dans `%LOCALAPPDATA%\ObryxAdminTool`.
 

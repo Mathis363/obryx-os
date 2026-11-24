@@ -28,7 +28,34 @@ const DEFAULT_APPEARANCE = {
   backTop: true
 };
 
+const DEFAULT_COPY = {
+  eyebrow: "Obryx OS / 0.4 Alpha4",
+  heroTop: "Try Linux first.",
+  heroAccent: "Install it later.",
+  heroLead: "Obryx OS runs straight from a USB stick. No installation, no changes to your drive — just boot it up and see what it feels like.",
+  fineprint: "One file. Nothing to unzip. Nothing to combine.",
+  ticker: "Live USB|Nothing to install|UEFI · x86_64|Beta build|Windows stays put"
+};
+
+const DEFAULT_STYLE = {
+  glow: 110,
+  grain: 55,
+  scan: 12,
+  vignette: 35,
+  radius: 14,
+  speed: 100,
+  hero: 100,
+  grainOn: true,
+  scanOn: true,
+  vignetteOn: true,
+  cornersOn: true,
+  heroShineOn: true,
+  css: ""
+};
+
 let APPEARANCE = { ...DEFAULT_APPEARANCE, customColor: "#57e6c5" };
+let COPY = { ...DEFAULT_COPY };
+let STYLE = { ...DEFAULT_STYLE };
 let GALLERY_ITEMS = DEFAULT_GALLERY.map((item) => ({ ...item }));
 let DOWNLOAD_URL = "";
 let REMOTE_COUNTER_URL = "";
@@ -79,7 +106,98 @@ function loadAdminConfig() {
   }
   if (typeof saved.remoteCounterUrl === "string") REMOTE_COUNTER_URL = saved.remoteCounterUrl.trim();
   if (Array.isArray(saved.gallery)) GALLERY_ITEMS = normalizeGallery(saved.gallery);
+  if (saved.copy && typeof saved.copy === "object") COPY = normalizeCopy(saved.copy);
+  if (saved.style && typeof saved.style === "object") STYLE = normalizeStyle(saved.style);
   applyAppearance();
+  applyStyle();
+  applyCopy();
+}
+
+function normalizeCopy(raw) {
+  const out = { ...DEFAULT_COPY };
+  Object.keys(DEFAULT_COPY).forEach((key) => {
+    if (typeof raw[key] !== "string") return;
+    const value = raw[key].trim();
+    if (!value) return;
+    out[key] = value.slice(0, key === "ticker" ? 400 : 180);
+  });
+  return out;
+}
+
+function normalizeStyle(raw) {
+  const out = { ...DEFAULT_STYLE };
+  const number = (key, min, max) => {
+    const value = Number(raw[key]);
+    if (!Number.isFinite(value)) return;
+    out[key] = Math.min(max, Math.max(min, Math.round(value)));
+  };
+  number("glow", 0, 200);
+  number("grain", 0, 100);
+  number("scan", 0, 50);
+  number("vignette", 0, 80);
+  number("radius", 0, 32);
+  number("speed", 30, 250);
+  number("hero", 70, 140);
+  ["grainOn", "scanOn", "vignetteOn", "cornersOn", "heroShineOn"].forEach((key) => {
+    if (typeof raw[key] === "boolean") out[key] = raw[key];
+  });
+  if (typeof raw.css === "string") {
+    out.css = raw.css.replace(/<\/style/gi, "").replace(/@import/gi, "").slice(0, 8000);
+  }
+  return out;
+}
+
+function applyStyle() {
+  const root = document.documentElement;
+  root.style.setProperty("--obryx-glow", (STYLE.glow / 100).toFixed(2));
+  root.style.setProperty("--obryx-grain", (STYLE.grain / 1000).toFixed(3));
+  root.style.setProperty("--obryx-scan", (STYLE.scan / 100).toFixed(3));
+  root.style.setProperty("--obryx-vignette", (STYLE.vignette / 100).toFixed(3));
+  root.style.setProperty("--obryx-radius", `${STYLE.radius}px`);
+  root.style.setProperty("--obryx-speed", (STYLE.speed / 100).toFixed(2));
+  root.style.setProperty("--obryx-hero", (STYLE.hero / 100).toFixed(2));
+  root.classList.toggle("no-grain", STYLE.grainOn === false || STYLE.grain === 0);
+  root.classList.toggle("no-scan", STYLE.scanOn === false);
+  root.classList.toggle("no-vignette", STYLE.vignetteOn === false);
+  root.classList.toggle("no-corners", STYLE.cornersOn === false);
+  root.classList.toggle("no-hero-shine", STYLE.heroShineOn === false);
+
+  let styleTag = document.getElementById("obryxCustomStyle");
+  if (STYLE.css) {
+    if (!styleTag) {
+      styleTag = document.createElement("style");
+      styleTag.id = "obryxCustomStyle";
+      document.head.appendChild(styleTag);
+    }
+    styleTag.textContent = STYLE.css;
+  } else if (styleTag) {
+    styleTag.remove();
+  }
+}
+
+function applyCopy() {
+  document.querySelectorAll("[data-copy-text]").forEach((element) => {
+    const value = COPY[element.dataset.copyText];
+    if (value) element.textContent = value;
+  });
+
+  const track = document.querySelector(".ticker-track");
+  if (!track) return;
+  const items = COPY.ticker.split(/[|\n]/).map((part) => part.trim()).filter(Boolean).slice(0, 16);
+  if (!items.length) items.push("Live USB");
+  const group = document.createElement("div");
+  group.className = "ticker-group";
+  items.forEach((item, index) => {
+    if (index) {
+      const star = document.createElement("b");
+      star.textContent = "✦";
+      group.appendChild(star);
+    }
+    const span = document.createElement("span");
+    span.textContent = item;
+    group.appendChild(span);
+  });
+  track.replaceChildren(group.cloneNode(true), group.cloneNode(true));
 }
 
 function normalizeGallery(list) {

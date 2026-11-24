@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Obryx OS — Private console · v3.3</title>
+  <title>Obryx OS — Private console · v3.4</title>
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -87,7 +87,7 @@
     h1 { font-size: clamp(1.9rem, 5vw, 2.5rem); letter-spacing: -.05em; line-height: 1.08; margin: 0 0 10px; }
     h2 { margin: 0 0 16px; font-size: 1.12rem; letter-spacing: -.03em; color: var(--amber); }
     p.lead { color: var(--muted); font-size: .92rem; line-height: 1.6; margin: 0 0 24px; }
-    .status { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin: 0 0 26px; }
+    .status { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin: 0 0 26px; }
     .status div { padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: rgba(255,255,255,.03); }
     .status small { display: block; margin-bottom: 5px; font-family: var(--mono); font-size: .58rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
     .status b { font-family: var(--mono); font-size: .74rem; font-weight: 500; color: var(--teal); }
@@ -176,6 +176,14 @@
     .drop strong { font-size: .85rem; }
     .drop small { font-family: var(--mono); font-size: .68rem; color: var(--muted); }
     .fine { margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border); font-size: .72rem; color: var(--muted); line-height: 1.6; }
+    .style-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+    .style-grid label { margin: 0; }
+    .style-grid label > span { display: flex; justify-content: space-between; gap: 8px; }
+    .style-grid label > span b { font-family: var(--mono); color: var(--teal); font-weight: 500; }
+    input[type="range"] { width: 100%; accent-color: var(--teal); cursor: pointer; }
+    textarea { width: 100%; min-height: 110px; padding: 12px; border: 1px solid var(--border); border-radius: 12px; background: rgba(0,0,0,.28); color: #d7e2f5; font: .72rem/1.5 var(--mono); resize: vertical; outline: none; }
+    textarea:focus { border-color: rgba(87,230,197,.55); }
+    .style-note { margin: -8px 0 18px; font-family: var(--mono); font-size: .64rem; color: var(--muted); }
     [hidden] { display: none !important; }
     @media (max-width: 560px) {
       .status { grid-template-columns: repeat(2, 1fr); }
@@ -190,7 +198,7 @@
 <body>
   <main class="shell">
     <section id="lockView" class="panel">
-      <div class="mark"><i></i> Obryx OS // private console <span class="ver">v3.3</span></div>
+      <div class="mark"><i></i> Obryx OS // private console <span class="ver">v3.4</span></div>
       <h1>Private settings.</h1>
       <p class="lead">Enter your code to change the download link, the look and the behaviour of the main site in this browser.</p>
       <form id="lockForm">
@@ -201,10 +209,10 @@
     </section>
 
     <section id="adminView" class="panel" hidden>
-      <div class="mark"><i></i> Obryx OS // private console <span class="ver">v3.3</span></div>
+      <div class="mark"><i></i> Obryx OS // private console <span class="ver">v3.4</span></div>
       <h1>Control center.</h1>
       <p class="lead">Everything is saved in <strong>this browser only</strong>. Reload the main site after a change.</p>
-      <div class="whats-new"><b>What's new in v3.3</b><span>Gallery now supports renaming screenshots inline (View / Rename / ↑ / ↓ / Delete). Visitors, Diagnostics and custom colour are still here. Hard-refresh with Ctrl + F5 if needed.</span></div>
+      <div class="whats-new"><b>What's new in v3.4</b><span>New Style tab: glow, grain, scanlines, vignette, corners, radius, speed, hero size, editable texts, presets and custom CSS. Hard-refresh with Ctrl + F5 if needed.</span></div>
 
       <div class="status" id="statusGrid" aria-live="polite">
         <div><small>Link</small><b id="statusLink">Not set</b></div>
@@ -213,11 +221,13 @@
         <div><small>Effects</small><b id="statusFx">All on</b></div>
         <div><small>Visits today</small><b id="statusVisits">0</b></div>
         <div><small>Gallery</small><b id="statusGallery">7</b></div>
+        <div><small>Style</small><b id="statusStyle">Default</b></div>
       </div>
 
       <nav class="tabs" role="tablist" aria-label="Console sections">
         <button class="tab is-active" type="button" role="tab" aria-selected="true" data-tab="download">Download</button>
         <button class="tab" type="button" role="tab" aria-selected="false" data-tab="appearance">Appearance</button>
+        <button class="tab" type="button" role="tab" aria-selected="false" data-tab="style">Style</button>
         <button class="tab" type="button" role="tab" aria-selected="false" data-tab="visitors">Visitors</button>
         <button class="tab" type="button" role="tab" aria-selected="false" data-tab="gallery">Gallery</button>
         <button class="tab" type="button" role="tab" aria-selected="false" data-tab="security">Security</button>
@@ -272,6 +282,59 @@
             <a class="btn" href="index.html">Preview site</a>
           </div>
           <div class="msg" id="fxMsg"></div>
+        </form>
+      </section>
+
+      <section class="tab-panel" id="panel-style" role="tabpanel" hidden>
+        <form id="styleForm">
+          <h2>Style presets</h2>
+          <div class="presets">
+            <button class="small" type="button" data-style-preset="neon">Neon</button>
+            <button class="small" type="button" data-style-preset="clean">Clean</button>
+            <button class="small" type="button" data-style-preset="midnight">Midnight</button>
+            <button class="small" type="button" data-style-preset="retro">Retro</button>
+          </div>
+          <p class="hint">Pick a starting point, tweak anything below, then save. Presets only fill the fields — nothing is saved until you click <strong>Save style</strong>.</p>
+
+          <h2>Atmosphere</h2>
+          <label class="toggle"><span>Film grain<small>Soft analog texture over the page</small></span><input type="checkbox" id="stGrainOn" checked><i class="switch"></i></label>
+          <label class="toggle"><span>Scanlines<small>Faint CRT lines, slowly drifting</small></span><input type="checkbox" id="stScanOn" checked><i class="switch"></i></label>
+          <label class="toggle"><span>Vignette<small>Darkened edges for depth</small></span><input type="checkbox" id="stVignetteOn" checked><i class="switch"></i></label>
+          <label class="toggle"><span>HUD corners<small>Bracket marks at the screen corners</small></span><input type="checkbox" id="stCornersOn" checked><i class="switch"></i></label>
+          <label class="toggle"><span>Hero shine<small>Glow that follows the pointer on the mock desktop</small></span><input type="checkbox" id="stHeroShineOn" checked><i class="switch"></i></label>
+
+          <h2>Intensity</h2>
+          <div class="style-grid">
+            <label><span>Glow <b id="stGlowVal">110%</b></span><input type="range" id="stGlow" min="0" max="200" value="110"></label>
+            <label><span>Grain <b id="stGrainVal">55%</b></span><input type="range" id="stGrain" min="0" max="100" value="55"></label>
+            <label><span>Scanlines <b id="stScanVal">12%</b></span><input type="range" id="stScan" min="0" max="50" value="12"></label>
+            <label><span>Vignette <b id="stVignetteVal">35%</b></span><input type="range" id="stVignette" min="0" max="80" value="35"></label>
+            <label><span>Corner radius <b id="stRadiusVal">14px</b></span><input type="range" id="stRadius" min="0" max="32" value="14"></label>
+            <label><span>Animation speed <b id="stSpeedVal">100%</b></span><input type="range" id="stSpeed" min="30" max="250" value="100"></label>
+            <label><span>Hero size <b id="stHeroVal">100%</b></span><input type="range" id="stHero" min="70" max="140" value="100"></label>
+          </div>
+
+          <h2>Editable text</h2>
+          <div class="style-grid">
+            <label><span>Eyebrow</span><input id="copyEyebrow" type="text" maxlength="180" value="Obryx OS / 0.4 Alpha4"></label>
+            <label><span>Hero line 1</span><input id="copyHeroTop" type="text" maxlength="180" value="Try Linux first."></label>
+            <label><span>Hero line 2 (gradient)</span><input id="copyHeroAccent" type="text" maxlength="180" value="Install it later."></label>
+            <label><span>Hero paragraph</span><input id="copyHeroLead" type="text" maxlength="180" value="Obryx OS runs straight from a USB stick. No installation, no changes to your drive — just boot it up and see what it feels like."></label>
+            <label><span>Fine print</span><input id="copyFineprint" type="text" maxlength="180" value="One file. Nothing to unzip. Nothing to combine."></label>
+          </div>
+          <label><span>Ticker items<small>Separate each item with a <code>|</code> — shown twice for the scrolling loop</small></span><input id="copyTicker" type="text" maxlength="400" value="Live USB|Nothing to install|UEFI · x86_64|Beta build|Windows stays put"></label>
+
+          <h2>Custom CSS</h2>
+          <p class="hint">Applied last on the public site only. Imports and script tags are blocked. Keep it short.</p>
+          <textarea id="stCss" spellcheck="false" placeholder=".hero { filter: saturate(1.2); }"></textarea>
+          <p class="style-note">Custom CSS is exported with your settings. The access code never is.</p>
+
+          <div class="row">
+            <button class="primary" type="submit">Save style</button>
+            <button type="button" id="styleResetBtn">Reset style</button>
+            <a class="btn" href="index.html">Preview site</a>
+          </div>
+          <div class="msg" id="styleMsg"></div>
         </form>
       </section>
 
@@ -333,7 +396,7 @@
 
       <section class="tab-panel" id="panel-transfer" role="tabpanel" hidden>
         <h2>Move settings to another device</h2>
-        <p class="hint">Export a file, send it to your friend, then import it here on their browser. Settings and the screenshot gallery are included; the access code is never included.</p>
+        <p class="hint">Export a file, send it to your friend, then import it here on their browser. Settings, style, editable text and the screenshot gallery are included; the access code is never included.</p>
         <div class="row">
           <button class="primary" type="button" id="exportBtn">Export settings</button>
           <button type="button" id="summaryBtn">Copy link + hash</button>
@@ -368,6 +431,24 @@
     const DEFAULT_ISO = "Obryx-OS-0.4-Alpha4-x86_64.iso";
     const DEFAULT_HASH = "46d071d4d011ff0061a7baf3316e9689484490169a2b9ca1ca892a2e712cbefb";
     const FX_DEFAULTS = { accent: "teal", customColor: "#57e6c5", particles: true, magnetic: true, ticker: true, backTop: true };
+    const COPY_DEFAULTS = {
+      eyebrow: "Obryx OS / 0.4 Alpha4",
+      heroTop: "Try Linux first.",
+      heroAccent: "Install it later.",
+      heroLead: "Obryx OS runs straight from a USB stick. No installation, no changes to your drive — just boot it up and see what it feels like.",
+      fineprint: "One file. Nothing to unzip. Nothing to combine.",
+      ticker: "Live USB|Nothing to install|UEFI · x86_64|Beta build|Windows stays put"
+    };
+    const STYLE_DEFAULTS = {
+      glow: 110, grain: 55, scan: 12, vignette: 35, radius: 14, speed: 100, hero: 100,
+      grainOn: true, scanOn: true, vignetteOn: true, cornersOn: true, heroShineOn: true, css: ""
+    };
+    const STYLE_PRESETS = {
+      neon: { glow: 165, grain: 55, scan: 12, vignette: 35, radius: 18, speed: 100, hero: 104, accent: "teal" },
+      clean: { glow: 55, grain: 12, scan: 0, vignette: 8, radius: 8, speed: 85, hero: 96, accent: "teal" },
+      midnight: { glow: 100, grain: 40, scan: 16, vignette: 55, radius: 14, speed: 120, hero: 100, accent: "indigo" },
+      retro: { glow: 90, grain: 100, scan: 34, vignette: 30, radius: 4, speed: 150, hero: 102, accent: "amber" }
+    };
     const DEFAULT_GALLERY = Array.from({ length: 7 }, (_, i) => {
       const n = String(i + 1).padStart(2, "0");
       return {
@@ -387,6 +468,7 @@
     const lockMsg = document.getElementById("lockMsg");
     const adminMsg = document.getElementById("adminMsg");
     const fxMsg = document.getElementById("fxMsg");
+    const styleMsg = document.getElementById("styleMsg");
     const codeMsg = document.getElementById("codeMsg");
     const transferMsg = document.getElementById("transferMsg");
     const visitorMsg = document.getElementById("visitorMsg");
@@ -409,6 +491,13 @@
     }
     function validHash(value) { return /^[a-f0-9]{64}$/i.test(value); }
 
+    function updateRangeLabel(id) {
+      const input = document.getElementById(id);
+      const label = document.getElementById(id + "Val");
+      if (!input || !label) return;
+      label.textContent = id === "stRadius" ? `${input.value}px` : `${input.value}%`;
+    }
+
     function fill() {
       const c = read();
       urlInput.value = c.downloadUrl || "";
@@ -425,6 +514,30 @@
       document.getElementById("fxMagnetic").checked = fx.magnetic !== false;
       document.getElementById("fxTicker").checked = fx.ticker !== false;
       document.getElementById("fxBackTop").checked = fx.backTop !== false;
+
+      const st = { ...STYLE_DEFAULTS, ...(c.style || {}) };
+      const cp = { ...COPY_DEFAULTS, ...(c.copy || {}) };
+      const ranges = {
+        stGlow: st.glow, stGrain: st.grain, stScan: st.scan, stVignette: st.vignette,
+        stRadius: st.radius, stSpeed: st.speed, stHero: st.hero
+      };
+      Object.entries(ranges).forEach(([id, value]) => {
+        const input = document.getElementById(id);
+        input.value = Number.isFinite(Number(value)) ? Number(value) : STYLE_DEFAULTS[id.replace(/^st/, "").toLowerCase()];
+        updateRangeLabel(id);
+      });
+      document.getElementById("stGrainOn").checked = st.grainOn !== false;
+      document.getElementById("stScanOn").checked = st.scanOn !== false;
+      document.getElementById("stVignetteOn").checked = st.vignetteOn !== false;
+      document.getElementById("stCornersOn").checked = st.cornersOn !== false;
+      document.getElementById("stHeroShineOn").checked = st.heroShineOn !== false;
+      document.getElementById("stCss").value = typeof st.css === "string" ? st.css.slice(0, 8000) : "";
+      Object.keys(COPY_DEFAULTS).forEach((key) => {
+        document.getElementById(`copy${key.charAt(0).toUpperCase()}${key.slice(1)}`).value = String(cp[key] || "");
+      });
+      const hasStyle = JSON.stringify(st) !== JSON.stringify(STYLE_DEFAULTS) ||
+        JSON.stringify(cp) !== JSON.stringify(COPY_DEFAULTS);
+      setStatus("statusStyle", hasStyle ? "Custom" : "Default", !hasStyle);
 
       const link = c.downloadUrl ? (/^[a-z][a-z0-9+.-]*:/i.test(c.downloadUrl) ? "External" : "Local file") : "Not set";
       const hash = !c.hash ? "Not set" : (validHash(c.hash) ? "Valid" : "Invalid");
@@ -787,6 +900,82 @@
       message(fxMsg, "Appearance saved. Reload the main site to see it.");
     });
 
+    ["stGlow", "stGrain", "stScan", "stVignette", "stRadius", "stSpeed", "stHero"].forEach((id) => {
+      document.getElementById(id).addEventListener("input", () => updateRangeLabel(id));
+    });
+
+    document.querySelectorAll("[data-style-preset]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const preset = STYLE_PRESETS[button.dataset.stylePreset];
+        if (!preset) return;
+        Object.keys(rangesForStyle()).forEach((id) => {
+          const key = id.replace(/^st/, "").toLowerCase();
+          if (Number.isFinite(preset[key])) document.getElementById(id).value = preset[key];
+          updateRangeLabel(id);
+        });
+        if (preset.accent) {
+          const radio = document.querySelector(`input[name="accent"][value="${preset.accent}"]`);
+          if (radio) radio.checked = true;
+        }
+        message(styleMsg, `${button.textContent} preset loaded. Click Save style to apply it.`);
+      });
+    });
+
+    function rangesForStyle() {
+      return {
+        stGlow: 1, stGrain: 1, stScan: 1, stVignette: 1,
+        stRadius: 1, stSpeed: 1, stHero: 1
+      };
+    }
+
+    document.getElementById("styleForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const css = document.getElementById("stCss").value.trim();
+      if (/<\/style|<script|@import|expression\s*\(|javascript:/i.test(css)) {
+        message(styleMsg, "That CSS contains a blocked pattern. Remove imports, script tags or JavaScript URLs.", true);
+        return;
+      }
+      const style = {
+        glow: Number(document.getElementById("stGlow").value),
+        grain: Number(document.getElementById("stGrain").value),
+        scan: Number(document.getElementById("stScan").value),
+        vignette: Number(document.getElementById("stVignette").value),
+        radius: Number(document.getElementById("stRadius").value),
+        speed: Number(document.getElementById("stSpeed").value),
+        hero: Number(document.getElementById("stHero").value),
+        grainOn: document.getElementById("stGrainOn").checked,
+        scanOn: document.getElementById("stScanOn").checked,
+        vignetteOn: document.getElementById("stVignetteOn").checked,
+        cornersOn: document.getElementById("stCornersOn").checked,
+        heroShineOn: document.getElementById("stHeroShineOn").checked,
+        css: css.slice(0, 8000)
+      };
+      const copy = {};
+      Object.keys(COPY_DEFAULTS).forEach((key) => {
+        const id = `copy${key.charAt(0).toUpperCase()}${key.slice(1)}`;
+        copy[key] = document.getElementById(id).value.trim().slice(0, key === "ticker" ? 400 : 180) || COPY_DEFAULTS[key];
+      });
+      const current = read();
+      const appearance = {
+        ...FX_DEFAULTS,
+        ...(current.appearance || {}),
+        accent: document.querySelector('input[name="accent"]:checked').value
+      };
+      write({ ...current, appearance, style, copy });
+      fill();
+      message(styleMsg, "Style saved. Reload the main site to see it.");
+    });
+
+    document.getElementById("styleResetBtn").addEventListener("click", () => {
+      if (!window.confirm("Reset glow, text, CSS and all style settings to defaults?")) return;
+      const c = read();
+      delete c.style;
+      delete c.copy;
+      write(c);
+      fill();
+      message(styleMsg, "Style reset to defaults.", true);
+    });
+
     document.getElementById("counterForm").addEventListener("submit", (event) => {
       event.preventDefault();
       const url = counterInput.value.trim();
@@ -956,6 +1145,8 @@
         hash: c.hash || DEFAULT_HASH,
         remoteCounterUrl: c.remoteCounterUrl || "",
         appearance: { ...FX_DEFAULTS, ...(c.appearance || {}) },
+        style: { ...STYLE_DEFAULTS, ...(c.style || {}) },
+        copy: { ...COPY_DEFAULTS, ...(c.copy || {}) },
         gallery: galleryItems()
       };
       const blob = new Blob([JSON.stringify(safe, null, 2)], { type: "application/json" });
@@ -993,6 +1184,16 @@
         if (data.appearance && typeof data.appearance === "object") {
           c.appearance = { ...FX_DEFAULTS, ...data.appearance };
         }
+        if (data.style && typeof data.style === "object") {
+          const next = { ...STYLE_DEFAULTS, ...data.style };
+          if (/<\/style|<script|@import|expression\s*\(|javascript:/i.test(String(next.css || ""))) {
+            throw new Error("Blocked CSS in file");
+          }
+          c.style = next;
+        }
+        if (data.copy && typeof data.copy === "object") {
+          c.copy = { ...COPY_DEFAULTS, ...data.copy };
+        }
         if (Array.isArray(data.gallery)) {
           c.gallery = data.gallery.slice(0, 40).filter((item) => {
             if (!item || typeof item.src !== "string" || !item.src.trim()) return false;
@@ -1026,6 +1227,8 @@
         "ISO file: " + (c.isoFilename || DEFAULT_ISO),
         "Hash: " + (c.hash || "not set"),
         "Appearance: " + JSON.stringify({ ...FX_DEFAULTS, ...(c.appearance || {}) }),
+        "Style: " + JSON.stringify({ ...STYLE_DEFAULTS, ...(c.style || {}) }),
+        "Editable text: " + JSON.stringify({ ...COPY_DEFAULTS, ...(c.copy || {}) }),
         "Remote counter: " + (c.remoteCounterUrl || "off"),
         "Local visits: " + visitHits().length,
         "Gallery screenshots: " + galleryItems().length

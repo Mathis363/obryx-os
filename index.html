@@ -12,8 +12,8 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=3">
   <link rel="stylesheet" href="enhance.css?v=10">
-  <link rel="stylesheet" href="ultra.css?v=4">
-  <script src="script.js?v=15" defer></script>
+  <link rel="stylesheet" href="ultra.css?v=5">
+  <script src="script.js?v=16" defer></script>
 </head>
 <body>
   <!-- Desktop-only gate: shown automatically on phones and tablets. -->
@@ -43,6 +43,13 @@
     <span class="aurora-blob aurora-blob--two"></span>
     <span class="aurora-blob aurora-blob--three"></span>
     <span class="aurora-grid"></span>
+  </div>
+
+  <!-- Admin-controlled atmosphere: scanlines, vignette, corner brackets. -->
+  <div class="obryx-fx" aria-hidden="true">
+    <span class="obryx-scanlines"></span>
+    <span class="obryx-vignette"></span>
+    <span class="obryx-corners"><i></i><i></i><i></i><i></i></span>
   </div>
 
   <header class="site-header" id="siteHeader">
@@ -80,9 +87,9 @@
       <canvas class="particle-field" id="particleField" aria-hidden="true"></canvas>
       <div class="container hero-grid">
         <div class="hero-copy">
-          <div class="eyebrow reveal"><span class="eyebrow-dot"></span> Obryx OS <span class="eyebrow-sep">/</span> 0.4 Alpha4</div>
-          <h1 class="reveal" style="--delay:.06s">Try Linux first.<br><span class="gradient-text">Install it later.</span></h1>
-          <p class="hero-lead reveal" style="--delay:.12s">Obryx OS runs straight from a USB stick. No installation, no changes to your drive — just boot it up and see what it feels like.</p>
+          <div class="eyebrow reveal"><span class="eyebrow-dot"></span> <span data-copy-text="eyebrow">Obryx OS / 0.4 Alpha4</span></div>
+          <h1 class="reveal" style="--delay:.06s"><span data-copy-text="heroTop">Try Linux first.</span><br><span class="gradient-text" data-copy-text="heroAccent">Install it later.</span></h1>
+          <p class="hero-lead reveal" style="--delay:.12s" data-copy-text="heroLead">Obryx OS runs straight from a USB stick. No installation, no changes to your drive — just boot it up and see what it feels like.</p>
           <div class="hero-actions reveal" style="--delay:.18s">
             <a class="btn btn--primary btn--glow" href="#" data-download>
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v12m0 0 4.5-4.5M12 15l-4.5-4.5M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -93,7 +100,7 @@
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m0 0-5.5-5.5M19 12l-5.5 5.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
           </div>
-          <p class="hero-fineprint reveal" style="--delay:.24s">One file. Nothing to unzip. Nothing to combine.</p>
+          <p class="hero-fineprint reveal" style="--delay:.24s" data-copy-text="fineprint">One file. Nothing to unzip. Nothing to combine.</p>
           <ul class="hero-chips reveal" style="--delay:.3s" aria-label="Highlights">
             <li><span class="chip-dot chip-dot--teal"></span> Live USB</li>
             <li><span class="chip-dot chip-dot--indigo"></span> UEFI · x86_64</li>
